@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import AceEditor from 'react-ace'
 import styled from '@emotion/styled'
-import { CODE_MODE } from '../constants'
-import { CodeMode } from '../types/common'
+import { CODE_MODE } from '@src/constants'
+import { CodeMode } from '@src/types'
 
 import 'ace-builds/src-noconflict/mode-typescript'
 import 'ace-builds/src-noconflict/mode-javascript'

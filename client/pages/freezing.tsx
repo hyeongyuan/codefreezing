@@ -1,12 +1,12 @@
 import { useRef } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
-import InputTitle from '../src/components/InputTitle'
-import InputTags from '../src/components/InputTags'
-import useResize from '../src/hooks/useResize'
 import styled from '@emotion/styled'
+import InputTitle from '@src/components/InputTitle'
+import InputTags from '@src/components/InputTags'
+import useResize from '@src/hooks/useResize'
 
-const CodeEditor = dynamic(() => import('../src/components/CodeEditor'), {
+const CodeEditor = dynamic(() => import('@src/components/CodeEditor'), {
   ssr: false,
 })
 
