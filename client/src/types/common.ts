@@ -1,0 +1,1 @@
+export type CodeMode = 'typescript' | 'javascript' | 'java' | 'python'
