@@ -24,4 +24,11 @@ export class Post {
 
   @UpdateDateColumn()
   updated_at: Date
+
+  serialize() {
+    const { ...rest } = this
+    return {
+      ...rest,
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import { FastifyPluginCallback } from 'fastify'
-import { getRepository } from 'typeorm'
+import { getRepository, getManager } from 'typeorm'
 import CustomError from '@lib/CustomError'
 import { Post } from '@entity/Post'
 
@@ -8,13 +8,9 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
    * GET /api/posts
    */
   fastify.get('/', async (request, reply) => {
-    return [
-      {
-        id: 1,
-        title: 'hello',
-        code: "function hello () { return 'world'; }",
-      },
-    ]
+    const posts = await getRepository(Post).find()
+
+    return posts.map((post) => post.serialize())
   })
   /**
    * GET /api/posts/:id
@@ -34,11 +30,21 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
   /**
    * POST /api/posts
    */
-  fastify.post<{ Body: any }>('/', async (request, reply) => {
-    const { body } = request
-    console.log(body)
-    return 'hello'
-  })
+  fastify.post<{ Body: { title: string; code: string } }>(
+    '/',
+    async (request, reply) => {
+      const { body } = request
+
+      const post = new Post()
+      post.title = body.title
+      post.code = body.code
+
+      const manager = getManager()
+      await manager.save(post)
+
+      return post.serialize()
+    },
+  )
 
   done()
 }
