@@ -5,14 +5,19 @@ const TEXTAREA_HEIGHT = 66
 
 interface InputTitleProps {
   placeholder?: string
+  value?: string
+  onChange?: (value: string) => void
 }
 
-function InputTitle({ placeholder }: InputTitleProps) {
-  const [value, setValue] = useState('')
+function InputTitle({
+  placeholder,
+  value = '',
+  onChange = () => {},
+}: InputTitleProps) {
   const [height, setHeight] = useState(TEXTAREA_HEIGHT)
 
   const onChangeValue = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(event.target.value)
+    onChange(event.target.value)
   }
 
   const onKeyPress = useCallback((event: React.KeyboardEvent) => {

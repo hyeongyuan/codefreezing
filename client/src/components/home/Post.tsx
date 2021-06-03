@@ -1,21 +1,16 @@
 import styled from '@emotion/styled'
 import dynamic from 'next/dynamic'
+import { IPost } from '@src/types'
 
 const CodeViewer = dynamic(() => import('@src/components/CodeViewer'), {
   ssr: false,
 })
 
-interface PostProps {
-  id: string
-  title: string
-  content: string
-}
-
-function Post({ id, title, content }: PostProps) {
+function Post({ id, title, code }: IPost) {
   return (
     <Container>
       <Title>{title}</Title>
-      <CodeViewer key={id} language="javascript" content={content} />
+      <CodeViewer key={id} language="javascript" content={code} />
     </Container>
   )
 }

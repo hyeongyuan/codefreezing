@@ -9,9 +9,14 @@ import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-java'
 import 'ace-builds/src-noconflict/theme-tomorrow'
 
-function CodeEditor() {
+interface CodeEditorProps {
+  placeholder?: string
+  value?: string
+  onChange?: (value: string) => void
+}
+
+function CodeEditor({ value = '', onChange = () => {} }: CodeEditorProps) {
   const [mode, setMode] = useState<CodeMode>('javascript')
-  const [value, setValue] = useState('')
 
   const onChangeMode = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setMode(event.target.value as CodeMode)
@@ -36,7 +41,8 @@ function CodeEditor() {
         fontSize={16}
         highlightActiveLine={false}
         tabSize={2}
-        onChange={setValue}
+        onChange={onChange}
+        value={value}
       />
     </div>
   )

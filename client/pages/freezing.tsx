@@ -1,10 +1,11 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import styled from '@emotion/styled'
 import InputTitle from '@src/components/InputTitle'
 import InputTags from '@src/components/InputTags'
 import useResize from '@src/hooks/useResize'
+import { apiPost } from '@src/api'
 
 const CodeEditor = dynamic(() => import('@src/components/CodeEditor'), {
   ssr: false,
@@ -12,26 +13,41 @@ const CodeEditor = dynamic(() => import('@src/components/CodeEditor'), {
 
 export default function FreezingPage() {
   const router = useRouter()
+  const [title, setTitle] = useState('')
+  const [code, setCode] = useState('')
 
   const docRef = useRef<HTMLDivElement | null>(null)
   const { width } = useResize(docRef)
 
-  const onCancelFreezing = () => {
+  const onCancel = () => {
     router.back()
+  }
+
+  const onSubmit = async () => {
+    try {
+      const res = await apiPost('/posts', { title, code })
+      console.log(res)
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   return (
     <RootContainer>
       <MainContainer ref={docRef}>
         <TopContainer>
-          <InputTitle placeholder="제목을 입력하세요" />
+          <InputTitle
+            placeholder="제목을 입력하세요"
+            value={title}
+            onChange={setTitle}
+          />
           <InputTags placeholder="태그를 입력하세요" />
         </TopContainer>
-        <CodeEditor />
+        <CodeEditor value={code} onChange={setCode} />
         <BottomContainer style={{ width }}>
           <ButtonWrapper>
-            <button onClick={onCancelFreezing}>나가기</button>
-            <button>저장하기</button>
+            <button onClick={onCancel}>나가기</button>
+            <button onClick={onSubmit}>저장하기</button>
           </ButtonWrapper>
         </BottomContainer>
       </MainContainer>
