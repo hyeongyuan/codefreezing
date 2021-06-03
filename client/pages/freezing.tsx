@@ -34,7 +34,7 @@ export default function FreezingPage() {
   }
 
   return (
-    <RootContainer>å
+    <RootContainer>
       <MainContainer ref={docRef}>
         <TopContainer>
           <InputTitle
