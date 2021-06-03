@@ -1,18 +1,19 @@
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import styled from '@emotion/styled'
 
 interface InputTagsProps {
   placeholder?: string
+  value: string[]
+  onChange: Dispatch<SetStateAction<string[]>>
 }
 
-function InputTags({ placeholder }: InputTagsProps) {
+function InputTags({ placeholder, value: tags, onChange }: InputTagsProps) {
   const [value, setValue] = useState('')
-  const [tags, setTags] = useState<string[]>([])
 
   const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     if (value && value[value.length - 1] === ',') {
-      setTags((prevTags) => [...prevTags, value.slice(0, value.length - 1)])
+      onChange((prevTags) => [...prevTags, value.slice(0, value.length - 1)])
       setValue('')
     } else {
       setValue(value)
@@ -21,14 +22,14 @@ function InputTags({ placeholder }: InputTagsProps) {
 
   const onKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' && value) {
-      setTags((prevTags) => [...prevTags, value])
+      onChange((prevTags) => [...prevTags, value])
       setValue('')
     }
   }
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Backspace' && !value && tags.length !== 0) {
-      setTags((prevTags) => prevTags.splice(0, prevTags.length - 1))
+      onChange((prevTags) => prevTags.splice(0, prevTags.length - 1))
     }
   }
 

@@ -14,6 +14,7 @@ const CodeEditor = dynamic(() => import('@src/components/CodeEditor'), {
 export default function FreezingPage() {
   const router = useRouter()
   const [title, setTitle] = useState('')
+  const [tags, setTags] = useState<string[]>([])
   const [code, setCode] = useState('')
 
   const docRef = useRef<HTMLDivElement | null>(null)
@@ -25,7 +26,7 @@ export default function FreezingPage() {
 
   const onSubmit = async () => {
     try {
-      const res = await apiPost('/posts', { title, code })
+      const res = await apiPost('/posts', { title, code, tags })
       console.log(res)
     } catch (e) {
       console.log(e)
@@ -33,7 +34,7 @@ export default function FreezingPage() {
   }
 
   return (
-    <RootContainer>
+    <RootContainer>å
       <MainContainer ref={docRef}>
         <TopContainer>
           <InputTitle
@@ -41,7 +42,11 @@ export default function FreezingPage() {
             value={title}
             onChange={setTitle}
           />
-          <InputTags placeholder="태그를 입력하세요" />
+          <InputTags
+            placeholder="태그를 입력하세요"
+            value={tags}
+            onChange={setTags}
+          />
         </TopContainer>
         <CodeEditor value={code} onChange={setCode} />
         <BottomContainer style={{ width }}>

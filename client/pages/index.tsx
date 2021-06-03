@@ -29,8 +29,6 @@ const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
     fetchPosts()
   }, [])
 
-  console.log(posts)
-
   const onFreezingCode = () => {
     router.push('/freezing')
   }
