@@ -4,30 +4,38 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm'
+import {Tag} from '@entity/Tag'
+import { PostsTags } from '@entity/PostsTags'
 
 @Entity({
   name: 'posts',
 })
 export class Post {
-  @PrimaryGeneratedColumn()
-  id: number
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
 
-  @Column({ type: 'varchar', length: 20, nullable: false })
-  title: string
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  title!: string
 
-  @Column({ type: 'varchar', length: 1000, nullable: false })
-  code: string
+  @Column('text')
+  code!: string
+
+  @OneToMany(() => PostsTags, (postsTags) => postsTags.post)
+  tags?: Tag[]
 
   @CreateDateColumn()
-  created_at: Date
+  created_at!: Date
 
   @UpdateDateColumn()
-  updated_at: Date
+  updated_at!: Date
 
   serialize() {
-    const { ...rest } = this
+    const { tags, ...rest } = this
+    
     return {
+      ...tags && {tags: tags.map(tag => tag.name)},
       ...rest,
     }
   }

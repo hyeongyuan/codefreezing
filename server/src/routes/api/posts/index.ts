@@ -1,7 +1,9 @@
 import { FastifyPluginCallback } from 'fastify'
-import { getRepository, getManager } from 'typeorm'
+import { getRepository } from 'typeorm'
 import CustomError from '@lib/CustomError'
 import { Post } from '@entity/Post'
+import { Tag } from '@entity/Tag'
+import { PostsTags } from '@entity/PostsTags'
 
 const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
   /**
@@ -30,17 +32,23 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
   /**
    * POST /api/posts
    */
-  fastify.post<{ Body: { title: string; code: string } }>(
+  fastify.post<{ Body: { title: string; code: string; tags: string[] } }>(
     '/',
     async (request, reply) => {
       const { body } = request
+
+      const postRepo = getRepository(Post)
 
       const post = new Post()
       post.title = body.title
       post.code = body.code
 
-      const manager = getManager()
-      await manager.save(post)
+      const tagsData = await Promise.all(body.tags.map(Tag.findOrCreate))
+      await postRepo.save(post)
+
+      await PostsTags.syncPostTags(post.id, tagsData)
+
+      post.tags = tagsData
 
       return post.serialize()
     },
