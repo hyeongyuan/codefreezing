@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react'
+import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import styled from '@emotion/styled'
 import Post from '@src/components/home/Post'
 import { apiGet } from '@src/api'
 import { IPost } from '@src/types'
+import axios from 'axios'
 
-export default function HomePage() {
+interface HomePageProps {
+  posts: IPost[]
+}
+
+const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
   const router = useRouter()
-  const [posts, setPost] = useState<IPost[]>()
+  const [posts, setPost] = useState<IPost[]>(initialPosts)
 
   const fetchPosts = async () => {
     try {
@@ -23,6 +29,8 @@ export default function HomePage() {
     fetchPosts()
   }, [])
 
+  console.log(posts)
+
   const onFreezingCode = () => {
     router.push('/freezing')
   }
@@ -31,13 +39,20 @@ export default function HomePage() {
       <h1>Code Freezing</h1>
       <button onClick={onFreezingCode}>글쓰기</button>
       <ListContainer>
-        {posts?.map(({ id, title, code }) => (
-          <Post key={id} id={id} title={title} code={code} />
+        {posts?.map((post) => (
+          <Post key={post.id} {...post} />
         ))}
       </ListContainer>
     </div>
   )
 }
+
+export async function getServerSideProps() {
+  const { data: posts } = await axios.get(`${process.env.API_URL}/posts`)
+  return { props: { posts } }
+}
+
+export default HomePage
 
 const ListContainer = styled.div`
   display: grid;

@@ -4,4 +4,6 @@ export interface IPost {
   id: number
   title: string
   code: string
+  created_at: string
+  updated_at: string
 }
