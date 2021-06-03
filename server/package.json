@@ -1,0 +1,24 @@
+{
+  "name": "codefreezing-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node -r tsconfig-paths/register ./src/app.ts | pino-pretty"
+  },
+  "dependencies": {
+    "fastify": "^3.17.0",
+    "fastify-plugin": "^3.0.0",
+    "pg": "^8.6.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.33"
+  },
+  "devDependencies": {
+    "@types/node": "^15.6.2",
+    "@types/pino": "^6.3.8",
+    "pino-pretty": "^5.0.2",
+    "ts-node": "^10.0.0",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.3.2"
+  }
+}
