@@ -7,14 +7,19 @@
     "dev": "ts-node -r tsconfig-paths/register ./src/app.ts | pino-pretty"
   },
   "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^10.0.0",
     "fastify": "^3.17.0",
+    "fastify-cookie": "^5.3.1",
     "fastify-cors": "^6.0.1",
     "fastify-plugin": "^3.0.0",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.33"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.1",
     "@types/node": "^15.6.2",
     "@types/pino": "^6.3.8",
     "pino-pretty": "^5.0.2",

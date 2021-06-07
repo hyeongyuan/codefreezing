@@ -6,6 +6,9 @@ import Post from '@src/components/home/Post'
 import { apiGet } from '@src/api'
 import { IPost } from '@src/types'
 import axios from 'axios'
+import { useUserState } from '@src/atoms/authState'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 interface HomePageProps {
   posts: IPost[]
@@ -13,6 +16,7 @@ interface HomePageProps {
 
 const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
   const router = useRouter()
+  const [user] = useUserState()
   const [posts, setPost] = useState<IPost[]>(initialPosts)
 
   const fetchPosts = async () => {
@@ -35,6 +39,11 @@ const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
   return (
     <div>
       <h1>Code Freezing</h1>
+      {user ? (
+        <h3>{user.username}</h3>
+      ) : (
+        <a href={`${API_URL}/auth/redirect/github`}>깃헙 로그인</a>
+      )}
       <button onClick={onFreezingCode}>글쓰기</button>
       <ListContainer>
         {posts?.map((post) => (
@@ -46,7 +55,7 @@ const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
 }
 
 export async function getServerSideProps() {
-  const { data: posts } = await axios.get(`${process.env.API_URL}/posts`)
+  const { data: posts } = await axios.get(`${API_URL}/posts`)
   return { props: { posts } }
 }
 

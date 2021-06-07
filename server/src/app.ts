@@ -1,7 +1,12 @@
+import 'dotenv/config'
+import 'reflect-metadata'
+
 import fastify from 'fastify'
 import cors from 'fastify-cors'
+import cookie from 'fastify-cookie'
 import db from '@decorators/db'
 import apiRoute from '@routes/api'
+import jwtPlugin from '@plugins/jwtPlugin'
 
 const PORT = process.env.PORT || '3000'
 
@@ -17,6 +22,8 @@ server.register(cors, {
     callback(new Error('Not allowed'), false)
   },
 })
+server.register(cookie)
+server.register(jwtPlugin)
 server.register(db)
 server.register(apiRoute, { prefix: '/api' })
 
