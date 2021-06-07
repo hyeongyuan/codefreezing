@@ -4,9 +4,9 @@ import 'reflect-metadata'
 import fastify from 'fastify'
 import cors from 'fastify-cors'
 import cookie from 'fastify-cookie'
-import db from '@decorators/db'
 import apiRoute from '@routes/api'
 import jwtPlugin from '@plugins/jwtPlugin'
+import dbPlugin from '@plugins/dbPlugin'
 
 const PORT = process.env.PORT || '3000'
 
@@ -24,7 +24,7 @@ server.register(cors, {
 })
 server.register(cookie)
 server.register(jwtPlugin)
-server.register(db)
+server.register(dbPlugin)
 server.register(apiRoute, { prefix: '/api' })
 
 server.listen(+PORT, (err) => {

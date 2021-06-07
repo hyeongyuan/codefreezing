@@ -1,3 +1,4 @@
+import { FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
 import { createConnection, getConnectionOptions } from 'typeorm'
 import { Post } from '@entity/Post'
@@ -6,7 +7,7 @@ import { PostsTags } from '@entity/PostsTags'
 import { User } from '@entity/User'
 import { SocialAccount } from '@entity/SocialAccount'
 
-export default fp(async (fastify) => {
+const callback: FastifyPluginCallback = async (fastify) => {
   try {
     const connectionOptions = await getConnectionOptions()
     const connection = await createConnection(connectionOptions)
@@ -21,4 +22,10 @@ export default fp(async (fastify) => {
   } catch (error) {
     console.log(error)
   }
+}
+
+const dbPlugin = fp(callback, {
+  name: 'dbPlugin',
 })
+
+export default dbPlugin
