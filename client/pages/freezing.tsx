@@ -2,14 +2,17 @@ import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import styled from '@emotion/styled'
-import InputTitle from '@src/components/InputTitle'
-import InputTags from '@src/components/InputTags'
+import InputTitle from '@src/components/common/InputTitle'
+import InputTags from '@src/components/common/InputTags'
 import useResize from '@src/hooks/useResize'
 import { apiPost } from '@src/api'
 
-const CodeEditor = dynamic(() => import('@src/components/CodeEditor'), {
-  ssr: false,
-})
+const CodeEditor = dynamic(
+  () => import('@src/components/freezing/CodeEditor'),
+  {
+    ssr: false,
+  },
+)
 
 export default function FreezingPage() {
   const router = useRouter()

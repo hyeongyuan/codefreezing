@@ -7,6 +7,7 @@ import { apiGet } from '@src/api'
 import { IPost } from '@src/types'
 import axios from 'axios'
 import { useUserState } from '@src/atoms/authState'
+import Button from '@src/components/common/Button'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -36,15 +37,22 @@ const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
   const onFreezingCode = () => {
     router.push('/freezing')
   }
+
+  const onLogout = () => {
+    console.log('logout')
+  }
   return (
     <div>
       <h1>Code Freezing</h1>
       {user ? (
-        <h3>{user.username}</h3>
+        <>
+          <h3>{user.username}</h3>
+          <Button onClick={onLogout} label="로그아웃" />
+        </>
       ) : (
         <a href={`${API_URL}/auth/redirect/github`}>깃헙 로그인</a>
       )}
-      <button onClick={onFreezingCode}>글쓰기</button>
+      <Button onClick={onFreezingCode} label="글쓰기" />
       <ListContainer>
         {posts?.map((post) => (
           <Post key={post.id} {...post} />

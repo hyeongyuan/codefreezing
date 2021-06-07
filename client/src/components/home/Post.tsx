@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import dynamic from 'next/dynamic'
 import { IPost } from '@src/types'
 
-const CodeViewer = dynamic(() => import('@src/components/CodeViewer'), {
+const CodeViewer = dynamic(() => import('@src/components/common/CodeViewer'), {
   ssr: false,
 })
 
