@@ -5,13 +5,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm'
-import {Tag} from '@entity/Tag'
+import { Tag } from '@entity/Tag'
 import { PostsTags } from '@entity/PostsTags'
+import { User } from '@entity/User'
 
-@Entity({
-  name: 'posts',
-})
+@Entity({ name: 'posts' })
 export class Post {
   @PrimaryGeneratedColumn('uuid')
   id!: string
@@ -22,8 +23,15 @@ export class Post {
   @Column('text')
   code!: string
 
+  @ManyToOne(() => User, (user) => user.posts)
+  @JoinColumn({ name: 'user_id' })
+  user!: User
+
   @OneToMany(() => PostsTags, (postsTags) => postsTags.post)
-  tags?: Tag[]
+  tags!: Tag[]
+
+  @Column({ type: 'bool', default: true })
+  is_private!: boolean
 
   @CreateDateColumn()
   created_at!: Date
@@ -33,9 +41,9 @@ export class Post {
 
   serialize() {
     const { tags, ...rest } = this
-    
+
     return {
-      ...tags && {tags: tags.map(tag => tag.name)},
+      ...(tags && { tags: tags.map((tag) => tag.name) }),
       ...rest,
     }
   }

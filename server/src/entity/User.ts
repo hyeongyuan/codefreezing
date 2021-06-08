@@ -3,14 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 import { generateToken } from '@lib/auth'
+import { Post } from '@entity/Post'
 
-@Entity({
-  name: 'users',
-})
+@Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string
@@ -21,6 +21,9 @@ export class User {
 
   @Column({ type: 'varchar', length: 48, nullable: false, unique: true })
   username!: string
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts!: Post[]
 
   @CreateDateColumn()
   created_at!: Date

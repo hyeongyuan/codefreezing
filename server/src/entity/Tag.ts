@@ -11,9 +11,7 @@ import {
 import { Post } from '@entity/Post'
 import { PostsTags } from '@entity/PostsTags'
 
-@Entity({
-  name: 'tags',
-})
+@Entity({ name: 'tags' })
 export class Tag {
   @PrimaryGeneratedColumn('uuid')
   id!: string
@@ -22,7 +20,7 @@ export class Tag {
   @Column({ type: 'varchar', length: 20, nullable: false })
   name!: string
 
-  @OneToMany(() => PostsTags, postsTags => postsTags.tag)
+  @OneToMany(() => PostsTags, (postsTags) => postsTags.tag)
   posts!: Post[]
 
   @CreateDateColumn()

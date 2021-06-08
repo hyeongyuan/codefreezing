@@ -3,6 +3,7 @@ import {
   Entity,
   getRepository,
   Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
@@ -23,9 +24,11 @@ export class PostsTags {
   tag_id!: string
 
   @ManyToOne(() => Post, (post) => post.tags)
+  @JoinColumn({ name: 'post_id' })
   post!: Post
 
   @ManyToOne(() => Tag, (tag) => tag.posts)
+  @JoinColumn({ name: 'tag_id' })
   tag!: Tag
 
   static async syncPostTags(postId: string, tags: Tag[]) {
@@ -35,7 +38,7 @@ export class PostsTags {
       const postTag = new PostsTags()
       postTag.post_id = postId
       postTag.tag_id = tag.id
-      
+
       return postTag
     })
     return repo.save(postTags)
