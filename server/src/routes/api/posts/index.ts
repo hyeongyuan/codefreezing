@@ -18,7 +18,11 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
    * GET /api/posts
    */
   fastify.get('/', async (request, reply) => {
-    const posts = await getRepository(Post).find()
+    const posts = await getRepository(Post).find({
+      where: {
+        is_private: false,
+      },
+    })
 
     return posts.map((post) => post.serialize())
   })
