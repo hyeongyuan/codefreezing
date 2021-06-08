@@ -4,6 +4,14 @@ import CustomError from '@lib/CustomError'
 import { Post } from '@entity/Post'
 import { Tag } from '@entity/Tag'
 import { PostsTags } from '@entity/PostsTags'
+import { User } from '@entity/User'
+
+interface IPostBody {
+  title: string
+  code: string
+  tags: string[]
+  isPrivate: boolean
+}
 
 const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
   /**
@@ -32,27 +40,43 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
   /**
    * POST /api/posts
    */
-  fastify.post<{ Body: { title: string; code: string; tags: string[] } }>(
-    '/',
-    async (request, reply) => {
-      const { body } = request
+  fastify.post<{ Body: IPostBody }>('/', async (request, reply) => {
+    if (!request.user) {
+      throw new CustomError({
+        statusCode: 401,
+        name: 'UnauthorizedError',
+        message: 'Unauthorized',
+      })
+    }
 
-      const postRepo = getRepository(Post)
+    const user = await getRepository(User).findOne(request.user.id)
+    if (!user) {
+      throw new CustomError({
+        statusCode: 404,
+        name: 'NotFoundError',
+        message: 'User not found.',
+      })
+    }
 
-      const post = new Post()
-      post.title = body.title
-      post.code = body.code
+    const { title, code, tags, isPrivate } = request.body
 
-      const tagsData = await Promise.all(body.tags.map(Tag.findOrCreate))
-      await postRepo.save(post)
+    const postRepo = getRepository(Post)
 
-      await PostsTags.syncPostTags(post.id, tagsData)
+    const post = new Post()
+    post.title = title
+    post.code = code
+    post.is_private = isPrivate
+    post.user = user
 
-      post.tags = tagsData
+    const tagsData = await Promise.all(tags.map(Tag.findOrCreate))
+    await postRepo.save(post)
 
-      return post.serialize()
-    },
-  )
+    await PostsTags.syncPostTags(post.id, tagsData)
+
+    post.tags = tagsData
+
+    return post.serialize()
+  })
 
   done()
 }

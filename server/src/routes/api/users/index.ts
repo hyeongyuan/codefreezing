@@ -16,8 +16,6 @@ const userRoute: FastifyPluginCallback = (fastify, opts, done) => {
       })
     }
 
-    console.log({ hello: request.user.id })
-
     const user = await getRepository(User).findOne(request.user.id)
     if (!user) {
       throw new CustomError({

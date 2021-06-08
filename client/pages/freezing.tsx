@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import React, { useRef, useState, MouseEvent } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import styled from '@emotion/styled'
@@ -19,9 +19,14 @@ export default function FreezingPage() {
   const [title, setTitle] = useState('')
   const [tags, setTags] = useState<string[]>([])
   const [code, setCode] = useState('')
+  const [isPrivate, setIsPrivate] = useState(false)
 
   const docRef = useRef<HTMLDivElement | null>(null)
   const { width } = useResize(docRef)
+
+  const onChangePrivate = (event: any) => {
+    setIsPrivate(event.target.name === 'private')
+  }
 
   const onCancel = () => {
     router.back()
@@ -29,7 +34,7 @@ export default function FreezingPage() {
 
   const onSubmit = async () => {
     try {
-      const res = await apiPost('/posts', { title, code, tags })
+      const res = await apiPost('/posts', { title, code, tags, isPrivate })
       console.log(res)
     } catch (e) {
       console.log(e)
@@ -52,6 +57,22 @@ export default function FreezingPage() {
           />
         </TopContainer>
         <CodeEditor value={code} onChange={setCode} />
+        <div>
+          <input
+            type="radio"
+            name="public"
+            checked={!isPrivate}
+            onChange={onChangePrivate}
+          />
+          <label htmlFor="dewey">공개</label>
+          <input
+            type="radio"
+            name="private"
+            checked={isPrivate}
+            onChange={onChangePrivate}
+          />
+          <label htmlFor="dewey">비공개</label>
+        </div>
         <BottomContainer style={{ width }}>
           <ButtonWrapper>
             <button onClick={onCancel}>나가기</button>

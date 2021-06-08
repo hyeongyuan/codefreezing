@@ -16,7 +16,8 @@ const callback: FastifyPluginCallback = async (fastify, opts, done) => {
     try {
       const [type, accessToken] =
         request.headers.authorization?.split(' ') || []
-      if (type !== 'Bearer' && !accessToken) {
+
+      if (type === 'Bearer' && accessToken) {
         const decoded = await decodeToken<UserTokenDecoded>(accessToken)
         request.user = {
           id: decoded.userId,
