@@ -29,14 +29,29 @@ export class User {
   updated_at!: Date
 
   async generateToken() {
-    return generateToken(
+    const accessToken = await generateToken(
       {
-        subject: 'accessToken',
-        userId: this.id,
+        user_id: this.id,
       },
       {
-        expiresIn: '15d', // TODO: Set this to 3days later on
+        subject: 'access_token',
+        expiresIn: '3h',
       },
     )
+
+    const refreshToken = await generateToken(
+      {
+        user_id: this.id,
+      },
+      {
+        subject: 'refresh_token',
+        expiresIn: '15d',
+      },
+    )
+
+    return {
+      accessToken,
+      refreshToken,
+    }
   }
 }

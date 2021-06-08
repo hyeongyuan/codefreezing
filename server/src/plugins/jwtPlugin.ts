@@ -1,4 +1,5 @@
 import { decodeToken } from '@lib/auth'
+import CustomError from '@lib/CustomError'
 import { FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
 
@@ -12,11 +13,14 @@ interface UserTokenDecoded {
 const callback: FastifyPluginCallback = async (fastify, opts, done) => {
   fastify.decorateRequest('user', null)
   fastify.addHook('preHandler', async (request, reply) => {
-    const accessToken: string | undefined = request.cookies.access_token
     try {
-      const decoded = await decodeToken<UserTokenDecoded>(accessToken)
-      request.user = {
-        id: decoded.userId,
+      const [type, accessToken] =
+        request.headers.authorization?.split(' ') || []
+      if (type !== 'Bearer' && !accessToken) {
+        const decoded = await decodeToken<UserTokenDecoded>(accessToken)
+        request.user = {
+          id: decoded.userId,
+        }
       }
     } catch (e) {}
   })

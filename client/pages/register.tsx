@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { apiGet, apiPost } from '@src/api'
 import { SocialProfile } from '@src/types'
 import RegisterForm, {
   RegisterFormType,
 } from '@src/components/register/RegisterForm'
+import { apiGet, apiPost } from '@src/api'
 
 function RegisterPage() {
   const router = useRouter()
@@ -15,9 +15,9 @@ function RegisterPage() {
       return
     }
     const onGetSocialProfile = async () => {
-      const { data } = await apiGet('/auth/profile')
+      const { data: profile } = await apiGet('/auth/social/profile')
 
-      setSocialProfile(data)
+      setSocialProfile(profile)
     }
     onGetSocialProfile()
   }, [router.query])

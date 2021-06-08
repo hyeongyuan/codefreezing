@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
+import axios from 'axios'
 import styled from '@emotion/styled'
 import Post from '@src/components/home/Post'
-import { apiGet } from '@src/api'
-import { IPost } from '@src/types'
-import axios from 'axios'
-import { useUserState } from '@src/atoms/authState'
 import Button from '@src/components/common/Button'
+import { IPost } from '@src/types'
+import { useUserState } from '@src/atoms/authState'
+import { apiGet, apiPost, revokeAccessToken } from '@src/api'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -17,7 +17,7 @@ interface HomePageProps {
 
 const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
   const router = useRouter()
-  const [user] = useUserState()
+  const [user, setUser] = useUserState()
   const [posts, setPost] = useState<IPost[]>(initialPosts)
 
   const fetchPosts = async () => {
@@ -39,8 +39,14 @@ const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
   }
 
   const onLogout = () => {
-    console.log('logout')
+    apiPost('/auth/logout')
+      .then(() => {
+        revokeAccessToken()
+        setUser(null)
+      })
+      .catch(console.log)
   }
+
   return (
     <div>
       <h1>Code Freezing</h1>
@@ -50,7 +56,7 @@ const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
           <Button onClick={onLogout} label="로그아웃" />
         </>
       ) : (
-        <a href={`${API_URL}/auth/redirect/github`}>깃헙 로그인</a>
+        <a href={`${API_URL}/auth/social/redirect/github`}>깃헙 로그인</a>
       )}
       <Button onClick={onFreezingCode} label="글쓰기" />
       <ListContainer>

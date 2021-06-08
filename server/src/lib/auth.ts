@@ -4,7 +4,7 @@ import { SocialProfile, SocialProvider } from '@types'
 
 const { GITHUB_ID, JWT_SECRET } = process.env
 
-const redirectPath = `/api/auth/callback/`
+const redirectPath = `/api/auth/social/callback/`
 export const redirectUri =
   process.env.NODE_ENV === 'development'
     ? `http://localhost:3000${redirectPath}`
@@ -98,7 +98,6 @@ export const decodeToken = async <T = any>(token: string): Promise<T> => {
   if (!JWT_SECRET) {
     throw new Error('JWT_SECRET Environment Variable is not set')
   }
-
   return new Promise((resolve, reject) => {
     jwt.verify(token, JWT_SECRET, (error, decoded) => {
       if (error) {
