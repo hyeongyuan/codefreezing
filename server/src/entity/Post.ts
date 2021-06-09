@@ -30,6 +30,9 @@ export class Post {
   @OneToMany(() => PostsTags, (postsTags) => postsTags.post)
   tags!: Tag[]
 
+  @Column({ type: 'varchar', length: 40 })
+  language!: string
+
   @Column({ type: 'bool', default: true })
   is_private!: boolean
 

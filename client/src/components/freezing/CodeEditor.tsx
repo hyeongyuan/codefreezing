@@ -1,31 +1,41 @@
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import AceEditor from 'react-ace'
 import styled from '@emotion/styled'
 import { CODE_MODE } from '@src/constants'
-import { CodeMode } from '@src/types'
+import { CodeLanguage } from '@src/types'
 
 import 'ace-builds/src-noconflict/mode-typescript'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-java'
+import 'ace-builds/src-noconflict/mode-python'
 import 'ace-builds/src-noconflict/theme-tomorrow'
+
+export interface CodeInfo {
+  value: string
+  language: CodeLanguage
+}
 
 interface CodeEditorProps {
   placeholder?: string
-  value?: string
-  onChange?: (value: string) => void
+  code: CodeInfo
+  onChange: Dispatch<SetStateAction<CodeInfo>>
 }
 
-function CodeEditor({ value = '', onChange = () => {} }: CodeEditorProps) {
-  const [mode, setMode] = useState<CodeMode>('javascript')
-
-  const onChangeMode = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setMode(event.target.value as CodeMode)
-  }
-
+function CodeEditor({ code, onChange }: CodeEditorProps) {
+  const onChangeLang = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const language = event.target.value as CodeLanguage
+      onChange((prev) => ({ ...prev, language }))
+    },
+    [],
+  )
+  const onChangeValue = useCallback((value: string) => {
+    onChange((prev) => ({ ...prev, value }))
+  }, [])
   return (
     <div>
       <Toobar>
-        <select value={mode} onChange={onChangeMode}>
+        <select value={code.language} onChange={onChangeLang}>
           {CODE_MODE.map((mode) => (
             <option key={mode} value={mode}>
               {mode}
@@ -36,13 +46,13 @@ function CodeEditor({ value = '', onChange = () => {} }: CodeEditorProps) {
       <AceEditor
         style={{ width: '100%' }}
         setOptions={{ useWorker: false }}
-        mode={mode}
+        mode={code.language}
         theme="tomorrow"
         fontSize={16}
         highlightActiveLine={false}
         tabSize={2}
-        onChange={onChange}
-        value={value}
+        onChange={onChangeValue}
+        value={code.value}
       />
     </div>
   )

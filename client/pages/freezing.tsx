@@ -1,4 +1,4 @@
-import React, { useRef, useState, MouseEvent } from 'react'
+import React, { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import styled from '@emotion/styled'
@@ -6,6 +6,7 @@ import InputTitle from '@src/components/common/InputTitle'
 import InputTags from '@src/components/common/InputTags'
 import useResize from '@src/hooks/useResize'
 import { apiPost } from '@src/api'
+import { CodeInfo } from '@src/components/freezing/CodeEditor'
 
 const CodeEditor = dynamic(
   () => import('@src/components/freezing/CodeEditor'),
@@ -18,7 +19,10 @@ export default function FreezingPage() {
   const router = useRouter()
   const [title, setTitle] = useState('')
   const [tags, setTags] = useState<string[]>([])
-  const [code, setCode] = useState('')
+  const [codeInfo, setCodeInfo] = useState<CodeInfo>({
+    value: '',
+    language: 'javascript',
+  })
   const [isPrivate, setIsPrivate] = useState(false)
 
   const docRef = useRef<HTMLDivElement | null>(null)
@@ -34,8 +38,15 @@ export default function FreezingPage() {
 
   const onSubmit = async () => {
     try {
-      const res = await apiPost('/posts', { title, code, tags, isPrivate })
-      console.log(res)
+      await apiPost('/posts', {
+        title,
+        tags,
+        isPrivate,
+        code: codeInfo.value,
+        language: codeInfo.language,
+      })
+      alert('업로드 성공')
+      router.back()
     } catch (e) {
       console.log(e)
     }
@@ -56,7 +67,7 @@ export default function FreezingPage() {
             onChange={setTags}
           />
         </TopContainer>
-        <CodeEditor value={code} onChange={setCode} />
+        <CodeEditor code={codeInfo} onChange={setCodeInfo} />
         <div>
           <input
             type="radio"

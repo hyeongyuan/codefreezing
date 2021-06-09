@@ -6,11 +6,11 @@ const CodeViewer = dynamic(() => import('@src/components/common/CodeViewer'), {
   ssr: false,
 })
 
-function Post({ id, title, code, created_at }: IPost) {
+function Post({ id, title, code, language, created_at }: IPost) {
   return (
     <Container>
       <Title>{title}</Title>
-      <CodeViewer key={id} language="javascript" content={code} />
+      <CodeViewer key={id} language={language} content={code} />
       <p>{created_at}</p>
     </Container>
   )

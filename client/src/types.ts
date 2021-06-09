@@ -1,9 +1,11 @@
-export type CodeMode = 'typescript' | 'javascript' | 'java' | 'python'
+export type CodeLanguage = 'typescript' | 'javascript' | 'java' | 'python'
 
 export interface IPost {
   id: number
   title: string
+  language: CodeLanguage
   code: string
+  is_private: boolean
   created_at: string
   updated_at: string
 }

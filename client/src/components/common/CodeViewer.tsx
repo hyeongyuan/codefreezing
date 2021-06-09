@@ -1,14 +1,14 @@
 import { useEffect } from 'react'
 import Prism from 'prismjs'
-import { CodeMode } from '@src/types'
+import { CodeLanguage } from '@src/types'
 import styled from '@emotion/styled'
 
 interface CodeViewerProps {
-  language: CodeMode
+  language: CodeLanguage
   content: string
 }
 
-export default function CodeViewer({ language, content }: CodeViewerProps) {
+function CodeViewer({ language, content }: CodeViewerProps) {
   useEffect(() => {
     Prism.highlightAll()
   }, [language, content])
@@ -32,6 +32,8 @@ export default function CodeViewer({ language, content }: CodeViewerProps) {
     </Container>
   )
 }
+
+export default CodeViewer
 
 const Container = styled.div`
   .token.keyword {
