@@ -26,7 +26,9 @@ function RegisterPage() {
     try {
       await apiPost('/auth/register', data)
 
-      await apiGet('/users')
+      alert('회원가입 성공')
+
+      router.replace('/')
     } catch (error) {
       console.log({ error })
     }

@@ -23,11 +23,12 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
   fastify.get('/refresh', async (request, reply) => {
     const refreshTokne: string | undefined = request.cookies['refresh_token']
     if (!refreshTokne) {
-      throw new CustomError({
+      reply.status(401).send({
         statusCode: 401,
-        message: "'refresh_token' cookie is empty.",
-        name: 'UnauthorizedError',
+        error: 'Unauthorized',
+        message: '"refresh_token" cookie is empty.',
       })
+      return
     }
     try {
       const decoded = await decodeToken<DecodedToken>(refreshTokne)
@@ -65,21 +66,35 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
       const decoded = await decodeToken<SocialRegisterToken>(registerToken)
 
       const manager = getManager()
+      const user = await manager.transaction(
+        'SERIALIZABLE',
+        async (entityManager) => {
+          const user = new User()
+          user.email = email
+          user.username = username
+          await entityManager.save(user)
 
-      manager.transaction('SERIALIZABLE', async (entityManager) => {
-        const user = new User()
-        user.email = email
-        user.username = username
-        await entityManager.save(user)
+          const socialAccount = new SocialAccount()
+          socialAccount.provider = decoded.provider
+          socialAccount.social_id = decoded.profile.id.toString()
+          socialAccount.user = user
+          await entityManager.save(socialAccount)
 
-        const socialAccount = new SocialAccount()
-        socialAccount.provider = decoded.provider
-        socialAccount.social_id = decoded.profile.id.toString()
-        socialAccount.user = user
-        await entityManager.save(socialAccount)
+          return user
+        },
+      )
+      // register_token 쿠키 제거
+      reply.clearCookie('register_token')
 
-        reply.status(201).send(user)
+      // refresh_token 쿠키 등록
+      const { refreshToken } = await user.generateToken()
+      reply.setCookie('refresh_token', refreshToken, {
+        path: '/',
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 15,
       })
+
+      reply.status(201).send(user)
     } catch (e) {
       throw new CustomError({
         statusCode: 401,

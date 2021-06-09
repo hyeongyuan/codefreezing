@@ -9,11 +9,12 @@ const userRoute: FastifyPluginCallback = (fastify, opts, done) => {
    */
   fastify.get('/', async (request, reply) => {
     if (!request.user) {
-      throw new CustomError({
+      reply.status(401).send({
         statusCode: 401,
-        name: 'UnauthorizedError',
-        message: 'Unauthorized',
+        error: 'Unauthorized',
+        message: 'Authentication is required.',
       })
+      return
     }
 
     const user = await getRepository(User).findOne(request.user.id)

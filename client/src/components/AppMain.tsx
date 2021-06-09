@@ -1,17 +1,16 @@
 import { useEffect } from 'react'
 import { AppProps } from 'next/app'
-import axios, { AxiosError } from 'axios'
+import { useRouter } from 'next/router'
+import { AxiosError } from 'axios'
 import { useUserState } from '@src/atoms/authState'
-import { registerAccessToken } from '@src/api'
+import { apiGet, registerAccessToken } from '@src/api'
 
 function AppMain({ Component, pageProps }: AppProps) {
+  const router = useRouter()
   const [, setUser] = useUserState()
   useEffect(() => {
-    axios
-      .get('/users')
-      .then((reponse) => {
-        setUser(reponse.data)
-      })
+    apiGet('/users')
+      .then((reponse) => setUser(reponse.data))
       .catch((error: AxiosError) => {
         const { response } = error
         if (!response) {
@@ -19,8 +18,7 @@ function AppMain({ Component, pageProps }: AppProps) {
           return
         }
         if (response.status === 401) {
-          axios
-            .get('/auth/refresh')
+          apiGet('/auth/refresh')
             .then((response) => {
               const { accessToken, user } = response.data
 
@@ -35,7 +33,7 @@ function AppMain({ Component, pageProps }: AppProps) {
             .catch(console.log)
         }
       })
-  }, [setUser])
+  }, [setUser, router.pathname])
   return <Component {...pageProps} />
 }
 

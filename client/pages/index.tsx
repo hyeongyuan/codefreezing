@@ -54,11 +54,11 @@ const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
         <>
           <h3>{user.username}</h3>
           <Button onClick={onLogout} label="로그아웃" />
+          <Button onClick={onFreezingCode} label="글쓰기" />
         </>
       ) : (
         <a href={`${API_URL}/auth/social/redirect/github`}>깃헙 로그인</a>
       )}
-      <Button onClick={onFreezingCode} label="글쓰기" />
       <ListContainer>
         {posts?.map((post) => (
           <Post key={post.id} {...post} />
