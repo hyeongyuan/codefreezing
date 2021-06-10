@@ -6,6 +6,8 @@ export interface IPost {
   language: CodeLanguage
   code: string
   is_private: boolean
+  user: User
+  url_slug: string
   created_at: string
   updated_at: string
 }
@@ -21,4 +23,6 @@ export interface User {
   id: string
   email: string
   username: string
+  created_at: string
+  updated_at: string
 }

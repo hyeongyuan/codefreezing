@@ -1,10 +1,14 @@
 import { FastifyPluginCallback } from 'fastify'
 import { getRepository } from 'typeorm'
+import { customAlphabet } from 'nanoid'
 import CustomError from '@lib/CustomError'
 import { Post } from '@entity/Post'
 import { Tag } from '@entity/Tag'
 import { PostsTags } from '@entity/PostsTags'
 import { User } from '@entity/User'
+import { escapeForUrl } from '@lib/utils'
+
+const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 10)
 
 interface IPostBody {
   title: string
@@ -20,6 +24,7 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
    */
   fastify.get('/', async (request, reply) => {
     const posts = await getRepository(Post).find({
+      relations: ['user'],
       where: {
         is_private: false,
       },
@@ -73,6 +78,20 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
     post.code = code
     post.is_private = isPrivate
     post.user = user
+
+    // Generate url slug
+    let processedUrlSlug = escapeForUrl(title)
+    const urlSlugDuplicate = await postRepo.findOne({
+      where: {
+        user,
+        url_slug: processedUrlSlug,
+      },
+    })
+    if (urlSlugDuplicate) {
+      const randomString = nanoid()
+      processedUrlSlug += `-${randomString}`
+    }
+    post.url_slug = processedUrlSlug
 
     const tagsData = await Promise.all(tags.map(Tag.findOrCreate))
     await postRepo.save(post)

@@ -7,11 +7,9 @@ import { DecodedToken, SocialRegisterToken } from '@types'
 import CustomError from '@lib/CustomError'
 import { SocialAccount } from '@entity/SocialAccount'
 
-interface IRegister {
-  Body: {
-    email: string
-    username: string
-  }
+interface IRegisterBody {
+  email: string
+  username: string
 }
 
 const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
@@ -40,9 +38,7 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
           message: 'User not found.',
         })
       }
-
       const { accessToken } = await user.generateToken()
-
       reply.send({ accessToken, user })
     } catch (error) {
       throw error
@@ -52,7 +48,7 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
    * POST /api/auth/register
    * Register
    */
-  fastify.post<IRegister>('/register', async (request, reply) => {
+  fastify.post<{ Body: IRegisterBody }>('/register', async (request, reply) => {
     const registerToken: string | undefined = request.cookies['register_token']
     if (!registerToken) {
       throw new CustomError({
@@ -84,7 +80,7 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
         },
       )
       // register_token 쿠키 제거
-      reply.clearCookie('register_token')
+      reply.clearCookie('register_token', { path: '/' })
 
       // refresh_token 쿠키 등록
       const { refreshToken } = await user.generateToken()

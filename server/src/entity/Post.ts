@@ -7,6 +7,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm'
 import { Tag } from '@entity/Tag'
 import { PostsTags } from '@entity/PostsTags'
@@ -36,6 +37,10 @@ export class Post {
   @Column({ type: 'bool', default: true })
   is_private!: boolean
 
+  @Index()
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  url_slug!: string
+
   @CreateDateColumn()
   created_at!: Date
 
@@ -44,6 +49,8 @@ export class Post {
 
   serialize() {
     const { tags, ...rest } = this
+
+    console.log(this.user)
 
     return {
       ...(tags && { tags: tags.map((tag) => tag.name) }),
