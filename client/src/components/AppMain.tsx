@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { AxiosError } from 'axios'
+import Header from '@src/components/Header'
 import { useUserState } from '@src/atoms/authState'
 import { apiGet, registerAccessToken } from '@src/api'
 import { User } from '@src/types'
@@ -35,7 +36,12 @@ function AppMain({ Component, pageProps }: AppProps) {
         }
       })
   }, [setUser, router.pathname])
-  return <Component {...pageProps} />
+  return (
+    <>
+      <Header />
+      <Component {...pageProps} />
+    </>
+  )
 }
 
 export default AppMain
