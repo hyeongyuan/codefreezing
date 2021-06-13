@@ -9,9 +9,9 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm'
-import { Tag } from '@entity/Tag'
 import { PostsTags } from '@entity/PostsTags'
 import { User } from '@entity/User'
+import { Tag } from './Tag'
 
 @Entity({ name: 'posts' })
 export class Post {
@@ -46,15 +46,4 @@ export class Post {
 
   @UpdateDateColumn()
   updated_at!: Date
-
-  serialize() {
-    const { tags, ...rest } = this
-
-    console.log(this.user)
-
-    return {
-      ...(tags && { tags: tags.map((tag) => tag.name) }),
-      ...rest,
-    }
-  }
 }

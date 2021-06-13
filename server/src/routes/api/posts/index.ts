@@ -1,5 +1,5 @@
 import { FastifyPluginCallback } from 'fastify'
-import { getRepository } from 'typeorm'
+import { getManager, getRepository } from 'typeorm'
 import { customAlphabet } from 'nanoid'
 import CustomError from '@lib/CustomError'
 import { Post } from '@entity/Post'
@@ -7,6 +7,7 @@ import { Tag } from '@entity/Tag'
 import { PostsTags } from '@entity/PostsTags'
 import { User } from '@entity/User'
 import { escapeForUrl } from '@lib/utils'
+import { fetchPostWithTags } from './query'
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 10)
 
@@ -16,6 +17,11 @@ interface IPostBody {
   code: string
   tags: string[]
   isPrivate: boolean
+}
+
+interface IPostParams {
+  username: string
+  url_slug: string
 }
 
 const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
@@ -30,23 +36,31 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
       },
     })
 
-    return posts.map((post) => post.serialize())
+    return posts
   })
   /**
-   * GET /api/posts/:id
+   * GET /api/posts/:username/:url_slug
    */
-  fastify.get<{ Params: { id: string } }>('/:id', async (request, reply) => {
-    const parsedId = parseInt(request.params.id)
-    const post = await getRepository(Post).findOne(parsedId)
-    if (!post) {
-      throw new CustomError({
-        statusCode: 404,
-        message: 'Post does not exist',
-        name: 'NotFoundError',
-      })
-    }
-    return post
-  })
+  fastify.get<{ Params: IPostParams }>(
+    '/:username/:url_slug',
+    async (request, reply) => {
+      const { username, url_slug } = request.params
+      try {
+        const post = await fetchPostWithTags({ username, urlSlug: url_slug })
+        if (!post) {
+          throw new CustomError({
+            statusCode: 404,
+            message: 'Post does not exist',
+            name: 'NotFoundError',
+          })
+        }
+        console.log(post)
+        reply.send(post)
+      } catch (e) {
+        throw e
+      }
+    },
+  )
   /**
    * POST /api/posts
    */
@@ -100,7 +114,7 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
 
     post.tags = tagsData
 
-    return post.serialize()
+    return post
   })
 
   done()
