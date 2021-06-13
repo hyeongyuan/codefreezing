@@ -1,5 +1,5 @@
 import { FastifyPluginCallback } from 'fastify'
-import { getManager, getRepository } from 'typeorm'
+import { getRepository } from 'typeorm'
 import { customAlphabet } from 'nanoid'
 import CustomError from '@lib/CustomError'
 import { Post } from '@entity/Post'
@@ -19,6 +19,9 @@ interface IPostBody {
   isPrivate: boolean
 }
 
+interface IUserPostsParams {
+  username: string
+}
 interface IPostParams {
   username: string
   url_slug: string
@@ -38,6 +41,26 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
 
     return posts
   })
+  /**
+   * GET /api/posts/:username
+   */
+  fastify.get<{ Params: IUserPostsParams }>(
+    '/:username',
+    async (request, reply) => {
+      const { username } = request.params
+      try {
+        const posts = await getRepository(Post)
+          .createQueryBuilder('posts')
+          .leftJoinAndSelect('posts.user', 'user')
+          .where('user.username = :username', { username })
+          .getMany()
+
+        reply.send(posts)
+      } catch (e) {
+        throw e
+      }
+    },
+  )
   /**
    * GET /api/posts/:username/:url_slug
    */

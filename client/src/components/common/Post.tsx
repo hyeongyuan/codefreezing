@@ -18,7 +18,7 @@ function Post({
 }: IPost) {
   const router = useRouter()
   const onClickPost = () => {
-    router.push(`/@${user.username}/${url_slug}`)
+    router.push(`/${user.username}/${url_slug}`)
   }
   return (
     <Container onClick={onClickPost}>

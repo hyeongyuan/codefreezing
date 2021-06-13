@@ -15,8 +15,7 @@ function RegisterPage() {
       return
     }
     const onGetSocialProfile = async () => {
-      const { data: profile } = await apiGet('/auth/social/profile')
-
+      const profile = await apiGet<SocialProfile>('/auth/social/profile')
       setSocialProfile(profile)
     }
     onGetSocialProfile()

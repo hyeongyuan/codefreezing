@@ -3,7 +3,27 @@ import { getRepository } from 'typeorm'
 import { User } from '@entity/User'
 import CustomError from '@lib/CustomError'
 
+interface IUserParams {
+  username: string
+}
+
 const userRoute: FastifyPluginCallback = (fastify, opts, done) => {
+  /**
+   * GET /api/users/:username
+   */
+  fastify.get<{ Params: IUserParams }>('/:username', async (request, reply) => {
+    const { username } = request.params
+    console.log({ username })
+    const user = await getRepository(User).findOne({ username })
+    if (!user) {
+      throw new CustomError({
+        statusCode: 404,
+        name: 'NotFoundError',
+        message: 'User not found.',
+      })
+    }
+    reply.send({ ...user })
+  })
   /**
    * GET /api/users
    */
@@ -27,7 +47,6 @@ const userRoute: FastifyPluginCallback = (fastify, opts, done) => {
     }
     reply.send({ ...user })
   })
-
   done()
 }
 

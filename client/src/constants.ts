@@ -1,3 +1,8 @@
-import {CodeMode} from '@src/types'
+import { CodeLanguage } from '@src/types'
 
-export const CODE_MODE: CodeMode[] = ['typescript', 'javascript', 'java', 'python'];
+export const CODE_MODE: CodeLanguage[] = [
+  'typescript',
+  'javascript',
+  'java',
+  'python',
+]

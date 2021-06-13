@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 axios.defaults.baseURL = '/api'
 axios.defaults.withCredentials = true
@@ -8,8 +8,30 @@ const client: AxiosInstance = axios.create({
   withCredentials: true,
 })
 
-export const apiGet = (url: string, config?: AxiosRequestConfig) =>
-  client({ ...config, url, method: 'GET' })
+const apiSuccessHandler = <T>(response: AxiosResponse<T>) => {
+  const { status, data, config } = response
+  const { data: requestData = '' } = config
+  console.log(
+    `##axios_response:${config.method}:${config.url}`,
+    status,
+    requestData,
+    data,
+  )
+  return data
+}
+
+export const api = <T>(
+  url: string,
+  config = {} as AxiosRequestConfig,
+): Promise<T> => {
+  return new Promise((resolve, reject) => {
+    client({ url, ...config })
+      .then((res) => resolve(apiSuccessHandler<T>(res)))
+      .catch((err) => reject(err))
+  })
+}
+
+export const apiGet = <T = any>(url: string) => api<T>(url)
 export const apiPost = (url: string, data?: any, config?: AxiosRequestConfig) =>
   client({ ...config, url, data, method: 'POST' })
 

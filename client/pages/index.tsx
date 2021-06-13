@@ -3,7 +3,7 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import styled from '@emotion/styled'
-import Post from '@src/components/home/Post'
+import Post from '@src/components/common/Post'
 import Button from '@src/components/common/Button'
 import { IPost } from '@src/types'
 import { useUserState } from '@src/atoms/authState'
@@ -22,9 +22,9 @@ const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
 
   const fetchPosts = async () => {
     try {
-      const { data } = await apiGet('/posts')
+      const posts = await apiGet<IPost[]>('/posts')
 
-      setPost(data)
+      setPost(posts)
     } catch (e) {
       console.log(e)
     }
