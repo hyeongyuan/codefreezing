@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import 'prismjs/themes/prism.css'
 
 import AppMain from '@src/components/AppMain'
 import type { AppProps } from 'next/app'
