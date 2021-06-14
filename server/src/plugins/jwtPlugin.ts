@@ -1,11 +1,10 @@
 import { decodeToken } from '@lib/auth'
-import CustomError from '@lib/CustomError'
 import { FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
 
 interface UserTokenDecoded {
   subject: string
-  userId: number
+  user_id: string
   iat: number
   exp: number
 }
@@ -20,7 +19,7 @@ const callback: FastifyPluginCallback = async (fastify, opts, done) => {
       if (type === 'Bearer' && accessToken) {
         const decoded = await decodeToken<UserTokenDecoded>(accessToken)
         request.user = {
-          id: decoded.userId,
+          id: decoded.user_id,
         }
       }
     } catch (e) {}
@@ -34,7 +33,7 @@ const jwtPlugin = fp(callback, {
 
 declare module 'fastify' {
   interface FastifyRequest {
-    user: null | { id: number }
+    user: null | { id: string }
   }
 }
 

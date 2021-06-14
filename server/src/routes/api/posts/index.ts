@@ -139,7 +139,45 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
 
     return post
   })
+  /**
+   * DELETE /api/posts/:id
+   */
+  fastify.delete<{ Params: { id: string } }>('/:id', async (request, reply) => {
+    if (!request.user) {
+      throw new CustomError({
+        statusCode: 401,
+        name: 'UnauthorizedError',
+        message: 'Unauthorized',
+      })
+    }
+    const { id } = request.params
+    try {
+      const postRepo = getRepository(Post)
+      const post = await postRepo.findOne(id, {
+        relations: ['user'],
+      })
+      if (!post) {
+        throw new CustomError({
+          statusCode: 404,
+          message: 'Post does not exist.',
+          name: 'NotFoundError',
+        })
+      }
+      if (post.user.id !== request.user.id) {
+        throw new CustomError({
+          statusCode: 403,
+          message: 'No permission.',
+          name: 'ForbiddenError',
+        })
+      }
 
+      await postRepo.remove(post)
+
+      reply.status(204)
+    } catch (e) {
+      throw e
+    }
+  })
   done()
 }
 export default postsRoute

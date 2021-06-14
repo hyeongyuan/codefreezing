@@ -7,6 +7,7 @@ export interface IPost {
   code: string
   is_private: boolean
   user: User
+  tags: ITag[]
   url_slug: string
   created_at: string
   updated_at: string
@@ -25,4 +26,9 @@ export interface User {
   username: string
   created_at: string
   updated_at: string
+}
+
+export interface ITag {
+  id: string
+  name: string
 }
