@@ -4,17 +4,24 @@ import axios from 'axios'
 import styled from '@emotion/styled'
 import Post from '@src/components/common/Post'
 import { apiGet } from '@src/api'
-import { IPost, User } from '@src/types'
+import { IPost, ServerSideError, User } from '@src/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 interface UserPageProps {
-  user: User | null
+  user?: User
+  error?: ServerSideError
 }
 
-function UserPage({ user }: UserPageProps) {
+function UserPage({ user, error }: UserPageProps) {
   const router = useRouter()
   const [posts, setPosts] = useState<IPost[]>()
+
+  useEffect(() => {
+    if (error && error.code === 404) {
+      router.replace('/404')
+    }
+  }, [error])
 
   const fetchUserPosts = async (username: string) => {
     try {
@@ -60,12 +67,20 @@ interface IUserQuery {
 
 export async function getServerSideProps({ query }: { query: IUserQuery }) {
   const { username } = query
-  let user: User | null = null
-  if (username) {
-    const { data } = await axios.get(`${API_URL}/users/${encodeURI(username)}`)
-    user = data
+  if (!username) return
+  try {
+    const { data: user } = await axios.get(
+      `${API_URL}/users/${encodeURI(username)}`,
+    )
+    return { props: { user } }
+  } catch (error) {
+    const { response = { status: 502, data: {} } } = error
+    return {
+      props: {
+        error: { code: response.status, message: response.data.message },
+      },
+    }
   }
-  return { props: { user } }
 }
 
 export default UserPage

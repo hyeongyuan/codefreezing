@@ -1,10 +1,10 @@
-import { useState, MouseEvent } from 'react'
+import { useState, MouseEvent, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import styled from '@emotion/styled'
-import { apiDelete, apiGet } from '@src/api'
-import { IPost } from '@src/types'
+import { apiDelete } from '@src/api'
+import { IPost, ServerSideError } from '@src/types'
 import { useUserState } from '@src/atoms/authState'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -14,31 +14,21 @@ const CodeViewer = dynamic(() => import('@src/components/common/CodeViewer'), {
 })
 
 interface PostPageProps {
-  post: IPost | null
+  post?: IPost
+  error?: ServerSideError
 }
 
-function PostPage({ post: initialPost }: PostPageProps) {
+function PostPage({ post: initialPost, error }: PostPageProps) {
   const router = useRouter()
   const [user] = useUserState()
-  const [post, setPost] = useState<IPost | null>(initialPost)
+  const [post] = useState<IPost | undefined>(initialPost)
   const isOwn = user && post && user.id === post.user.id
 
-  const fetchPost = async (username: string, urlSlug: string) => {
-    try {
-      const post = await apiGet<IPost>(`/posts/${username}/${urlSlug}`)
-
-      setPost(post)
-    } catch (e) {
-      console.log(e)
+  useEffect(() => {
+    if (error && error.code === 404) {
+      router.replace('/404')
     }
-  }
-
-  // useEffect(() => {
-  //   const { username, url_slug: urlSlug } = router.query
-  //   if (username && urlSlug) {
-  //     fetchPost(username as string, urlSlug as string)
-  //   }
-  // }, [router.query])
+  }, [error])
 
   const onDelete = async () => {
     if (!post) return
@@ -93,14 +83,20 @@ interface IPostQuery {
 
 export async function getServerSideProps({ query }: { query: IPostQuery }) {
   const { username, url_slug: urlSlug } = query
-  let post: IPost | null = null
-  if (username && urlSlug) {
+  if (!username || !urlSlug) return
+  try {
     const { data } = await axios.get(
       `${API_URL}/posts/${encodeURI(username)}/${encodeURI(urlSlug)}`,
     )
-    post = data
+    return { props: { post: data } }
+  } catch (error) {
+    const { response = { status: 502, data: {} } } = error
+    return {
+      props: {
+        error: { code: response.status, message: response.data.message },
+      },
+    }
   }
-  return { props: { post } }
 }
 
 export default PostPage
