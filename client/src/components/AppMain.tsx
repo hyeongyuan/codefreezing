@@ -11,6 +11,8 @@ function AppMain({ Component, pageProps }: AppProps) {
   const router = useRouter()
   const [, setUser] = useUserState()
 
+  const isErrorPage = router.pathname === '/404'
+
   useEffect(() => {
     apiGet<User>('/users')
       .then(setUser)
@@ -38,7 +40,7 @@ function AppMain({ Component, pageProps }: AppProps) {
   }, [setUser, router.pathname])
   return (
     <>
-      <Header />
+      {!isErrorPage && <Header />}
       <Component {...pageProps} />
     </>
   )
