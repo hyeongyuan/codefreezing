@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import dynamic from 'next/dynamic'
 import { IPost } from '@src/types'
 import { useRouter } from 'next/router'
+import { formatDate } from '@src/utils'
 
 const CodeViewer = dynamic(() => import('@src/components/common/CodeViewer'), {
   ssr: false,
@@ -24,7 +25,7 @@ function Post({
     <Container onClick={onClickPost}>
       <Title>{title}</Title>
       <CodeViewer key={id} language={language} content={code} />
-      <p>{created_at}</p>
+      <Date>{formatDate(created_at)}</Date>
     </Container>
   )
 }
@@ -35,6 +36,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 20px 10px;
+
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: rgb(0 0 0 / 4%) 0px 4px 16px 0px;
+  cursor: pointer;
 `
 const Title = styled.p`
   color: rgb(104, 104, 104);
@@ -42,4 +48,7 @@ const Title = styled.p`
   padding-bottom: 20px;
   font-size: 1.6rem;
   font-weight: 500;
+`
+const Date = styled.p`
+  color: rgb(134, 142, 150);
 `

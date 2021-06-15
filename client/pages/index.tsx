@@ -49,5 +49,5 @@ const ListContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 16px;
-  padding: 0 2%;
+  padding: 0 3%;
 `
