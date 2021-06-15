@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Button from '@src/components/common/Button'
 import { useUserState } from '@src/atoms/authState'
 import { apiPost, revokeAccessToken } from '@src/api'
+import { MouseEvent } from 'react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -23,10 +24,17 @@ function Header() {
       .catch(console.log)
   }
 
+  const onClickLogo = (event: MouseEvent) => {
+    event.preventDefault()
+    router.push('/')
+  }
+
   return (
     <Container>
       <Inner>
-        <h2>CodeFreezing</h2>
+        <a style={{cursor: 'pointer'}} onClick={onClickLogo}>
+          <h2>CODEFREEZING</h2>
+        </a>
         {user ? (
           <div>
             <Button onClick={onFreezingCode} label="글쓰기" />
