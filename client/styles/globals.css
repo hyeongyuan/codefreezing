@@ -1,3 +1,25 @@
+@charset "utf-8";
+@font-face{
+	font-family:'NotoSans';
+	font-weight:normal;
+	font-display:swap;
+	src:local('☺'),
+		url(/fonts/NotoSans/NotoSans-Regular.woff2) format('woff2'),
+		url(/fonts/NotoSans/NotoSans-Regular.woff) format('woff');
+}
+@font-face{
+	font-family:'NotoSans';
+	font-weight:bold;
+	font-display:swap;
+	src:local('☺'),
+		url(/fonts/NotoSans/NotoSans-Bold.woff2) format('woff2'),
+		url(/fonts/NotoSans/NotoSans-Bold.woff) format('woff');
+} 
+
+body {
+  font-family: NotoSans;
+}
+
 /* reset */
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,textarea,p,blockquote,th,td,input,select,button{margin:0;padding:0}
 fieldset,img{border:0 none}
