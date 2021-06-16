@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 import styled from '@emotion/styled'
 import { apiDelete } from '@src/api'
-import { IPost, ServerSideError } from '@src/types'
+import { IPost, ServerSideProps } from '@src/types'
 import { useUserState } from '@src/atoms/authState'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -13,15 +13,9 @@ const CodeViewer = dynamic(() => import('@src/components/common/CodeViewer'), {
   ssr: false,
 })
 
-interface PostPageProps {
-  post?: IPost
-  error?: ServerSideError
-}
-
-function PostPage({ post: initialPost, error }: PostPageProps) {
+function PostPage({ data: post, error }: ServerSideProps<IPost>) {
   const router = useRouter()
   const [user] = useUserState()
-  const [post] = useState<IPost | undefined>(initialPost)
   const isOwn = user && post && user.id === post.user.id
 
   useEffect(() => {
@@ -30,7 +24,12 @@ function PostPage({ post: initialPost, error }: PostPageProps) {
     }
   }, [error])
 
-  const onDelete = async () => {
+  const onClickEdit = async () => {
+    if (!post) return
+    router.push(`/freezing?id=${post.id}`)
+  }
+
+  const onClickDelete = async () => {
     if (!post) return
     const isConfirm = confirm('정말 삭제하시겠습니까?')
     if (isConfirm) {
@@ -57,7 +56,8 @@ function PostPage({ post: initialPost, error }: PostPageProps) {
         <Title>{post.title}</Title>
         {isOwn && (
           <ButtonWrapper>
-            <button onClick={onDelete}>삭제</button>
+            <Button onClick={onClickEdit}>수정</Button>
+            <Button onClick={onClickDelete}>삭제</Button>
           </ButtonWrapper>
         )}
         <TagWrapper>
@@ -77,18 +77,18 @@ function PostPage({ post: initialPost, error }: PostPageProps) {
 }
 
 interface IPostQuery {
-  username: any
-  url_slug: any
+  username: string
+  url_slug: string
 }
 
 export async function getServerSideProps({ query }: { query: IPostQuery }) {
   const { username, url_slug: urlSlug } = query
-  if (!username || !urlSlug) return
+  if (!username || !urlSlug) return { props: {} }
   try {
     const { data } = await axios.get(
       `${API_URL}/posts/${encodeURI(username)}/${encodeURI(urlSlug)}`,
     )
-    return { props: { post: data } }
+    return { props: { data } }
   } catch (error) {
     const { response = { status: 502, data: {} } } = error
     return {
@@ -124,6 +124,11 @@ const ButtonWrapper = styled.div`
   margin-bottom: -1.25rem;
   box-sizing: inherit;
 `
+const Button = styled.button`
+  margin-left: 0.5rem;
+  color: rgb(134, 142, 150);
+`
+
 const TagWrapper = styled.div`
   padding: 15px 0 20px 0;
 `

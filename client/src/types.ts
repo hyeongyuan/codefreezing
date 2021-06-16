@@ -33,7 +33,10 @@ export interface ITag {
   name: string
 }
 
-export interface ServerSideError {
-  code: number
-  message: string
+export interface ServerSideProps<T = any> {
+  data?: T
+  error?: {
+    code: number
+    message: string
+  }
 }

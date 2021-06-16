@@ -42,6 +42,11 @@ export const apiDelete = <T = any>(
   data?: any,
   config?: AxiosRequestConfig,
 ) => api<T>(url, { method: 'delete', data, ...config })
+export const apiPut = <T>(
+  url: string,
+  data?: any,
+  config?: AxiosRequestConfig,
+) => api<T>(url, { method: 'put', data, ...config })
 
 export const registerAccessToken = (accessToken: string) => {
   client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`

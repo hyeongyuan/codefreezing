@@ -1,34 +1,11 @@
-import { useEffect, useState } from 'react'
-import { NextPage } from 'next'
 import axios from 'axios'
 import styled from '@emotion/styled'
 import Post from '@src/components/common/Post'
-import { apiGet } from '@src/api'
-import { IPost } from '@src/types'
+import { IPost, ServerSideProps } from '@src/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-interface HomePageProps {
-  posts: IPost[]
-}
-
-const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
-  const [posts, setPost] = useState<IPost[]>(initialPosts)
-
-  const fetchPosts = async () => {
-    try {
-      const posts = await apiGet<IPost[]>('/posts')
-
-      setPost(posts)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  useEffect(() => {
-    fetchPosts()
-  }, [])
-
+function HomePage({ data: posts }: ServerSideProps<IPost[]>) {
   return (
     <ListContainer>
       {posts?.map((post) => (
@@ -39,8 +16,17 @@ const HomePage: NextPage<HomePageProps> = ({ posts: initialPosts }) => {
 }
 
 export async function getServerSideProps() {
-  const { data: posts } = await axios.get(`${API_URL}/posts`)
-  return { props: { posts } }
+  try {
+    const { data } = await axios.get(`${API_URL}/posts`)
+    return { props: { data } }
+  } catch (error) {
+    const { response = { status: 502, data: {} } } = error
+    return {
+      props: {
+        error: { code: response.status, message: response.data.message },
+      },
+    }
+  }
 }
 
 export default HomePage

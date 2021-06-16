@@ -4,16 +4,11 @@ import axios from 'axios'
 import styled from '@emotion/styled'
 import Post from '@src/components/common/Post'
 import { apiGet } from '@src/api'
-import { IPost, ServerSideError, User } from '@src/types'
+import { IPost, User, ServerSideProps } from '@src/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-interface UserPageProps {
-  user?: User
-  error?: ServerSideError
-}
-
-function UserPage({ user, error }: UserPageProps) {
+function UserPage({ data: user, error }: ServerSideProps<User>) {
   const router = useRouter()
   const [posts, setPosts] = useState<IPost[]>()
 
@@ -23,9 +18,9 @@ function UserPage({ user, error }: UserPageProps) {
     }
   }, [error])
 
-  const fetchUserPosts = async (username: string) => {
+  const fetchUserPosts = async (id: string) => {
     try {
-      const posts = await apiGet<IPost[]>(`/posts/${username}`)
+      const posts = await apiGet<IPost[]>(`/users/${id}/posts`)
       setPosts(posts)
     } catch (e) {
       console.log(e)
@@ -36,7 +31,7 @@ function UserPage({ user, error }: UserPageProps) {
     if (!user) {
       return
     }
-    fetchUserPosts(user.username)
+    fetchUserPosts(user.id)
   }, [user])
 
   if (!user) {
@@ -62,17 +57,15 @@ function UserPage({ user, error }: UserPageProps) {
 }
 
 interface IUserQuery {
-  username: any
+  username: string
 }
 
 export async function getServerSideProps({ query }: { query: IUserQuery }) {
   const { username } = query
-  if (!username) return
+  if (!username) return { props: {} }
   try {
-    const { data: user } = await axios.get(
-      `${API_URL}/users/${encodeURI(username)}`,
-    )
-    return { props: { user } }
+    const { data } = await axios.get(`${API_URL}/users/${encodeURI(username)}`)
+    return { props: { data } }
   } catch (error) {
     const { response = { status: 502, data: {} } } = error
     return {
