@@ -10,6 +10,7 @@ import { SocialAccount } from '@entity/SocialAccount'
 interface IRegisterBody {
   email: string
   username: string
+  thumbnail: string | null
 }
 
 const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
@@ -57,7 +58,7 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
         name: 'UnauthorizedError',
       })
     }
-    const { email, username } = request.body
+    const { email, username, thumbnail } = request.body
     try {
       const decoded = await decodeToken<SocialRegisterToken>(registerToken)
 
@@ -68,6 +69,7 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
           const user = new User()
           user.email = email
           user.username = username
+          user.thumbnail = thumbnail ? thumbnail : null
           await entityManager.save(user)
 
           const socialAccount = new SocialAccount()

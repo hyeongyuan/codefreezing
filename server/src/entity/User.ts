@@ -22,6 +22,9 @@ export class User {
   @Column({ type: 'varchar', length: 48, nullable: false, unique: true })
   username!: string
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  thumbnail!: string | null
+
   @OneToMany(() => Post, (post) => post.user)
   posts!: Post[]
 

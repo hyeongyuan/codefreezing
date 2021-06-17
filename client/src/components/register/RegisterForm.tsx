@@ -1,25 +1,26 @@
+import Avatar from '@src/components/common/Avatar'
 import useInputs from '@src/hooks/useInputs'
 
 export interface RegisterFormType {
   email: string
   username: string
+  thumbnail: string | null
 }
 
 export interface RegisterFormProps {
   onSubmit: (form: RegisterFormType) => any
-  defaultInfo?: {
-    email: string
-    username: string
-  }
+  defaultInfo?: RegisterFormType
 }
 
 function RegisterForm({ onSubmit, defaultInfo }: RegisterFormProps) {
   const [form, onChange] = useInputs({
     email: defaultInfo ? defaultInfo.email : '',
     username: defaultInfo ? defaultInfo.username : '',
+    thumbnail: defaultInfo ? defaultInfo.thumbnail : '',
   })
   return (
     <div>
+      <Avatar imageUrl={form.thumbnail || ''} size={100} />
       <p>이메일</p>
       <input
         type="text"

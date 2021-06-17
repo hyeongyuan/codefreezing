@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { SocialProfile } from '@src/types'
 import RegisterForm, {
   RegisterFormType,
 } from '@src/components/register/RegisterForm'
 import { apiGet, apiPost } from '@src/api'
+import { SocialProfile } from '@src/types'
 
 function RegisterPage() {
   const router = useRouter()
@@ -44,6 +44,7 @@ function RegisterPage() {
         defaultInfo={{
           username: socialProfile.name,
           email: socialProfile.email || '',
+          thumbnail: socialProfile.thumbnail,
         }}
       />
     </div>
