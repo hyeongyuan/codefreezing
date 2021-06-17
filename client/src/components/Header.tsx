@@ -32,8 +32,8 @@ function Header() {
   return (
     <Container>
       <Inner>
-        <a style={{cursor: 'pointer'}} onClick={onClickLogo}>
-          <h2>CODEFREEZING</h2>
+        <a style={{ cursor: 'pointer' }} onClick={onClickLogo}>
+          <h2 style={{ letterSpacing: -1 }}>Code Freezing</h2>
         </a>
         {user ? (
           <div>
@@ -56,7 +56,6 @@ const Container = styled.header`
   height: 4rem;
   width: 100%;
   box-shadow: 1px 1px 1px 1px rgba(116, 110, 110, 0.199);
-  margin-bottom: 36px;
 `
 
 const Inner = styled.div`
