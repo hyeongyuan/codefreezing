@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import dynamic from 'next/dynamic'
 import { IPost } from '@src/types'
 import { useRouter } from 'next/router'
-import { formatDate } from '@src/utils'
+import { formatDate, getCodeLangFromFilename } from '@src/utils'
 
 const CodeViewer = dynamic(() => import('@src/components/common/CodeViewer'), {
   ssr: false,
@@ -12,7 +12,7 @@ function Post({
   id,
   title,
   code,
-  language,
+  filename,
   user,
   url_slug,
   created_at,
@@ -21,6 +21,7 @@ function Post({
   const onClickPost = () => {
     router.push(`/${user.username}/${url_slug}`)
   }
+  const language = getCodeLangFromFilename(filename)
   return (
     <Container onClick={onClickPost}>
       <Title>{title}</Title>

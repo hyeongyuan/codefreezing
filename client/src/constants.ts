@@ -1,8 +1,12 @@
 import { CodeLanguage } from '@src/types'
 
-export const CODE_MODE: CodeLanguage[] = [
-  'typescript',
-  'javascript',
-  'java',
-  'python',
-]
+interface ExtToLang {
+  [index: string]: CodeLanguage
+}
+
+export const EXT_TO_LANG: ExtToLang = {
+  '.js': 'javascript',
+  '.ts': 'typescript',
+  '.java': 'java',
+  '.py': 'python',
+}

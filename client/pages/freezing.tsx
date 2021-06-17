@@ -1,11 +1,12 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import axios from 'axios'
 import styled from '@emotion/styled'
 import InputTitle from '@src/components/common/InputTitle'
 import InputTags from '@src/components/common/InputTags'
-import useResize from '@src/hooks/useResize'
+import Button from '@src/components/common/Button'
+import Input from '@src/components/freezing/Input'
 import { apiPost, apiPut } from '@src/api'
 import { CodeInfo } from '@src/components/freezing/CodeEditor'
 import { IPost, ServerSideProps } from '@src/types'
@@ -22,18 +23,16 @@ const CodeEditor = dynamic(
 function FreezingPage({ data }: ServerSideProps<IPost>) {
   const router = useRouter()
   const [title, setTitle] = useState(data?.title || '')
+  const [description, setDescription] = useState(data?.description || '')
   const [tags, setTags] = useState<string[]>(
     data?.tags.map((t) => t.name) || [],
   )
   const [codeInfo, setCodeInfo] = useState<CodeInfo>({
     value: data?.code || '',
-    language: data?.language || 'javascript',
+    filename: data?.filename || '',
   })
   const [isPrivate, setIsPrivate] = useState(!!data?.is_private)
   const isEditMode = !!router.query.id
-
-  const docRef = useRef<HTMLDivElement | null>(null)
-  const { width } = useResize(docRef)
 
   const onChangePrivate = (event: any) => {
     setIsPrivate(event.target.name === 'private')
@@ -45,26 +44,21 @@ function FreezingPage({ data }: ServerSideProps<IPost>) {
 
   const onSubmit = async () => {
     try {
+      const data = {
+        title,
+        description,
+        tags,
+        isPrivate,
+        code: codeInfo.value,
+        filename: codeInfo.filename,
+      }
       if (isEditMode) {
         const { id } = router.query
-        await apiPut(`/posts/${id}`, {
-          title,
-          tags,
-          isPrivate,
-          code: codeInfo.value,
-          language: codeInfo.language,
-        })
+        await apiPut(`/posts/${id}`, data)
       } else {
-        await apiPost('/posts', {
-          title,
-          tags,
-          isPrivate,
-          code: codeInfo.value,
-          language: codeInfo.language,
-        })
+        await apiPost('/posts', data)
       }
       alert(`${isEditMode ? '수정' : '업로드'} 성공`)
-
       router.back()
     } catch (e) {
       console.log(e)
@@ -72,47 +66,52 @@ function FreezingPage({ data }: ServerSideProps<IPost>) {
   }
 
   return (
-    <RootContainer>
-      <MainContainer ref={docRef}>
-        <TopContainer>
-          <InputTitle
-            placeholder="제목을 입력하세요"
-            value={title}
-            onChange={setTitle}
-          />
-          <InputTags
-            placeholder="태그를 입력하세요"
-            value={tags}
-            onChange={setTags}
-          />
-        </TopContainer>
+    <Container>
+      <TopContainer>
+        <InputTitle
+          placeholder="제목을 입력하세요"
+          value={title}
+          onChange={setTitle}
+        />
+        <InputTags
+          placeholder="태그를 입력하세요"
+          value={tags}
+          onChange={setTags}
+        />
+      </TopContainer>
+      <Input
+        style={{ backgroundColor: '#fafbfc', width: '100%' }}
+        placeholder="Description..."
+        onChange={(event) => setDescription(event.target.value)}
+        value={description}
+      />
+      <div style={{ marginTop: 16, marginBottom: 16 }}>
         <CodeEditor code={codeInfo} onChange={setCodeInfo} />
-        <div>
-          <input
-            type="radio"
-            name="public"
-            checked={!isPrivate}
-            onChange={onChangePrivate}
-          />
-          <label htmlFor="dewey">공개</label>
-          <input
-            type="radio"
-            name="private"
-            checked={isPrivate}
-            onChange={onChangePrivate}
-          />
-          <label htmlFor="dewey">비공개</label>
-        </div>
-        <BottomContainer style={{ width }}>
-          <ButtonWrapper>
-            <button onClick={onCancel}>나가기</button>
-            <button onClick={onSubmit}>
-              {isEditMode ? '수정하기' : '저장하기'}
-            </button>
-          </ButtonWrapper>
-        </BottomContainer>
-      </MainContainer>
-    </RootContainer>
+      </div>
+      <div>
+        <input
+          type="radio"
+          name="public"
+          checked={!isPrivate}
+          onChange={onChangePrivate}
+        />
+        <label htmlFor="dewey">공개</label>
+        <input
+          type="radio"
+          name="private"
+          checked={isPrivate}
+          onChange={onChangePrivate}
+        />
+        <label htmlFor="dewey">비공개</label>
+      </div>
+      <ButtonWrapper>
+        <Button onClick={onCancel} label="나가기" />
+        <Button
+          onClick={onSubmit}
+          label={isEditMode ? '수정하기' : '저장하기'}
+        />
+      </ButtonWrapper>
+    </Container>
   )
 }
 
@@ -134,31 +133,19 @@ export async function getServerSideProps({ query }: { query: { id: string } }) {
 
 export default FreezingPage
 
-const RootContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  height: 100vh;
-`
-
-const MainContainer = styled.div`
-  max-width: 800px;
-  padding-bottom: 4rem;
+const Container = styled.div`
+  max-width: 1012px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
 `
 
 const TopContainer = styled.div`
   padding: 2rem 3rem 0 3rem;
 `
 
-const BottomContainer = styled.div`
-  position: fixed;
-  bottom: 0;
-  z-index: 10;
-`
-
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 0 1rem 0 1rem;
-  height: 4rem;
-  width: 100%;
 `

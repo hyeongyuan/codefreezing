@@ -18,8 +18,11 @@ export class Post {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255 })
   title!: string
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  description!: string | null
 
   @Column('text')
   code!: string
@@ -32,13 +35,13 @@ export class Post {
   tags!: Tag[]
 
   @Column({ type: 'varchar', length: 40 })
-  language!: string
+  filename!: string
 
   @Column({ type: 'bool', default: true })
   is_private!: boolean
 
   @Index()
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255 })
   url_slug!: string
 
   @CreateDateColumn()

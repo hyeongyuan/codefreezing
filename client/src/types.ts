@@ -1,9 +1,15 @@
-export type CodeLanguage = 'typescript' | 'javascript' | 'java' | 'python'
+export type CodeLanguage =
+  | 'text'
+  | 'typescript'
+  | 'javascript'
+  | 'java'
+  | 'python'
 
 export interface IPost {
   id: number
   title: string
-  language: CodeLanguage
+  description: string | null
+  filename: string
   code: string
   is_private: boolean
   user: User

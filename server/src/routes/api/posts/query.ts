@@ -17,8 +17,9 @@ export async function fetchPostWithTagsById(
     SELECT 
       p.id AS id,
       p.title AS title,
+      p.description AS description,
       p.code AS code,
-      p.language AS language,
+      p.filename AS filename,
       p.is_private AS is_private,
       p.url_slug AS url_slug,
       p.created_at AS created_at,
@@ -49,8 +50,9 @@ export async function fetchPostWithTags({
     SELECT 
       p.id AS id,
       p.title AS title,
+      p.description AS description,
       p.code AS code,
-      p.language AS language,
+      p.filename AS filename,
       p.is_private AS is_private,
       p.url_slug AS url_slug,
       p.created_at AS created_at,
@@ -79,8 +81,9 @@ function makePostByQuery(query: any): Post | undefined {
   const post = new Post()
   post.id = query[0].id
   post.title = query[0].title
+  post.description = query[0].description
   post.code = query[0].code
-  post.language = query[0].language
+  post.filename = query[0].filename
   post.is_private = query[0].is_private
   post.url_slug = query[0].url_slug
   post.created_at = query[0].created_at

@@ -14,7 +14,8 @@ const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 10)
 
 interface IPostBody {
   title: string
-  language: string
+  description: string
+  filename: string
   code: string
   tags: string[]
   isPrivate: boolean
@@ -58,13 +59,15 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
         })
       }
 
-      const { title, language, code, tags, isPrivate } = request.body
+      const { title, description, filename, code, tags, isPrivate } =
+        request.body
 
       const postRepo = getRepository(Post)
 
       const post = new Post()
       post.title = title
-      post.language = language
+      post.description = description ? description : null
+      post.filename = filename
       post.code = code
       post.is_private = isPrivate
       post.user = user
@@ -121,7 +124,8 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
     { preHandler: [withAuth] },
     async (request, reply) => {
       const { id } = request.params
-      const { title, language, code, tags, isPrivate } = request.body
+      const { title, description, filename, code, tags, isPrivate } =
+        request.body
       try {
         const postRepo = getRepository(Post)
         const post = await postRepo.findOne(id, {
@@ -143,7 +147,8 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
         }
 
         post.title = title
-        post.language = language
+        post.description = description ? description : null
+        post.filename = filename
         post.code = code
         post.is_private = isPrivate
 

@@ -6,6 +6,7 @@ import styled from '@emotion/styled'
 import { apiDelete } from '@src/api'
 import { IPost, ServerSideProps } from '@src/types'
 import { useUserState } from '@src/atoms/authState'
+import { getCodeLangFromFilename } from '@src/utils'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -50,10 +51,12 @@ function PostPage({ data: post, error }: ServerSideProps<IPost>) {
   if (!post) {
     return null
   }
+  const language = getCodeLangFromFilename(post.filename)
   return (
     <Container>
       <TopContainer>
         <Title>{post.title}</Title>
+        <Description>{post.description}</Description>
         {isOwn && (
           <ButtonWrapper>
             <Button onClick={onClickEdit}>수정</Button>
@@ -68,10 +71,7 @@ function PostPage({ data: post, error }: ServerSideProps<IPost>) {
           ))}
         </TagWrapper>
       </TopContainer>
-      <div>
-        <CodeViewer language={post.language} content={post.code} />
-        <p>{post.language}</p>
-      </div>
+      <CodeViewer language={language} content={post.code} />
     </Container>
   )
 }
@@ -117,6 +117,8 @@ const TopContainer = styled.div`
 const Title = styled.h1`
   margin-bottom: 1rem;
 `
+
+const Description = styled.p``
 
 const ButtonWrapper = styled.div`
   display: flex;

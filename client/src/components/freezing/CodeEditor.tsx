@@ -1,7 +1,17 @@
-import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useState,
+  useCallback,
+  useEffect,
+  ChangeEvent,
+} from 'react'
 import AceEditor from 'react-ace'
 import styled from '@emotion/styled'
-import { CODE_MODE } from '@src/constants'
+import path from 'path'
+import Input from '@src/components/freezing/Input'
+import Select from '@src/components/freezing/Select'
+import { EXT_TO_LANG } from '@src/constants'
 import { CodeLanguage } from '@src/types'
 
 import 'ace-builds/src-noconflict/mode-typescript'
@@ -12,7 +22,7 @@ import 'ace-builds/src-noconflict/theme-tomorrow'
 
 export interface CodeInfo {
   value: string
-  language: CodeLanguage
+  filename: string
 }
 
 interface CodeEditorProps {
@@ -22,10 +32,15 @@ interface CodeEditorProps {
 }
 
 function CodeEditor({ code, onChange }: CodeEditorProps) {
-  const onChangeLang = useCallback(
-    (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const language = event.target.value as CodeLanguage
-      onChange((prev) => ({ ...prev, language }))
+  const [lang, setLang] = useState<CodeLanguage>('text')
+
+  useEffect(() => {
+    setLang(EXT_TO_LANG[path.extname(code.filename)] || 'text')
+  }, [code.filename])
+
+  const onChangeFilename = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      onChange((prev) => ({ ...prev, filename: event.target.value }))
     },
     [],
   )
@@ -33,20 +48,28 @@ function CodeEditor({ code, onChange }: CodeEditorProps) {
     onChange((prev) => ({ ...prev, value }))
   }, [])
   return (
-    <div>
+    <Container>
       <Toobar>
-        <select value={code.language} onChange={onChangeLang}>
-          {CODE_MODE.map((mode) => (
-            <option key={mode} value={mode}>
-              {mode}
-            </option>
-          ))}
-        </select>
+        <Input
+          placeholder="Filename including extension..."
+          onChange={onChangeFilename}
+          value={code.filename}
+        />
+        <div>
+          <Select
+            options={[
+              { label: 'hello', value: 'world' },
+              { label: 'world', value: 'hello' },
+            ]}
+            onChange={() => {}}
+            value=""
+          />
+        </div>
       </Toobar>
       <AceEditor
         style={{ width: '100%' }}
         setOptions={{ useWorker: false }}
-        mode={code.language}
+        mode={lang}
         theme="tomorrow"
         fontSize={16}
         highlightActiveLine={false}
@@ -54,14 +77,21 @@ function CodeEditor({ code, onChange }: CodeEditorProps) {
         onChange={onChangeValue}
         value={code.value}
       />
-    </div>
+    </Container>
   )
 }
 
 export default CodeEditor
 
+const Container = styled.div`
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  background-color: #fafbfc;
+`
+
 const Toobar = styled.div`
-  padding-left: 3rem;
-  padding-right: 3rem;
-  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-bottom: 1px solid #dddddd;
 `
