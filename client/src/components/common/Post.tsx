@@ -19,7 +19,7 @@ function Post({
 }: IPost) {
   const router = useRouter()
   const onClickPost = () => {
-    router.push(`/${user.username}/${url_slug}`)
+    router.push('/[username]/[url_slug]', `/${user.username}/${url_slug}`)
   }
   const language = getCodeLangFromFilename(filename)
   return (
