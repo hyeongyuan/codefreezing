@@ -7,11 +7,13 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 function HomePage({ data: posts }: ServerSideProps<IPost[]>) {
   return (
-    <ListContainer>
-      {posts?.map((post) => (
-        <Post key={post.id} {...post} />
-      ))}
-    </ListContainer>
+    <div style={{ marginTop: 24 }}>
+      <ListContainer>
+        {posts?.map((post) => (
+          <Post key={post.id} {...post} />
+        ))}
+      </ListContainer>
+    </div>
   )
 }
 
