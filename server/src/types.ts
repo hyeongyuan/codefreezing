@@ -13,7 +13,7 @@ export interface SocialRegisterToken {
 }
 
 export interface DecodedToken {
-  userId: number
+  user_id: number
   iat: number
   exp: number
   iss: string
