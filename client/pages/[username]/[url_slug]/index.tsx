@@ -1,4 +1,4 @@
-import { useState, MouseEvent, useEffect } from 'react'
+import { MouseEvent, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import axios from 'axios'

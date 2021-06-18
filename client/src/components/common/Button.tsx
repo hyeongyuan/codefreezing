@@ -2,8 +2,7 @@ import styled from '@emotion/styled'
 
 const Container = styled.div`
   display: inline;
-  padding: 10px 20px;
-  background-color: skyblue;
+  padding: 8px 18px;
   margin: 5px;
   border-radius: 5px;
   cursor: pointer;
@@ -16,11 +15,12 @@ const Label = styled.span`
 interface ButtonProps {
   label: string
   onClick: () => void
+  color?: string
 }
 
-function Button({ label, onClick }: ButtonProps) {
+function Button({ label, onClick, color = '#6C63FF' }: ButtonProps) {
   return (
-    <Container onClick={onClick}>
+    <Container style={{ backgroundColor: color }} onClick={onClick}>
       <Label>{label}</Label>
     </Container>
   )

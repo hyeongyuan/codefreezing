@@ -6,6 +6,7 @@ import { User } from '@entity/User'
 import { DecodedToken, SocialRegisterToken } from '@types'
 import CustomError from '@lib/CustomError'
 import { SocialAccount } from '@entity/SocialAccount'
+import withAuth from '@handler/withAuth'
 
 interface IRegisterBody {
   email: string
@@ -65,12 +66,12 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
       const exists = await getRepository(User)
         .createQueryBuilder()
         .where('email = :email OR username = :username', { email, username })
-        .getOne();
+        .getOne()
       if (exists) {
         throw new CustomError({
           statusCode: 409,
-          message: "already exists email or username",
-          name: 'ConflictError'
+          message: 'already exists email or username',
+          name: 'ConflictError',
         })
       }
 
@@ -109,6 +110,32 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
       throw e
     }
   })
+  /**
+   * DELETE /api/auth/unregister
+   * Register
+   */
+  fastify.delete(
+    '/unregister',
+    { preHandler: [withAuth] },
+    async (request, reply) => {
+      try {
+        const userRepo = getRepository(User)
+        const user = await userRepo.findOne(request.user?.id)
+        if (!user) {
+          throw new CustomError({
+            statusCode: 404,
+            name: 'NotFoundError',
+            message: 'User not found.',
+          })
+        }
+        reply.clearCookie('refresh_token', { path: '/' })
+        await userRepo.remove(user)
+        reply.status(204)
+      } catch (e) {
+        throw e
+      }
+    },
+  )
   /**
    * POST /api/auth/logout
    * Issue access_token using refresh_token

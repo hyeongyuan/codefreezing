@@ -26,13 +26,7 @@ function AppMain({ Component, pageProps }: AppProps) {
           apiGet<{ accessToken: string; user: User }>('/auth/refresh')
             .then(({ accessToken, user }) => {
               registerAccessToken(accessToken)
-              setUser({
-                id: user.id,
-                email: user.email,
-                username: user.username,
-                updated_at: user.updated_at,
-                created_at: user.created_at,
-              })
+              setUser(user)
             })
             .catch(console.log)
         }

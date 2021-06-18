@@ -26,10 +26,10 @@ export class SocialAccount {
   @UpdateDateColumn()
   updated_at!: Date
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user!: User
 
   @Column('uuid')
-  user_id!: string;
+  user_id!: string
 }

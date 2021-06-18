@@ -27,7 +27,7 @@ export class Post {
   @Column('text')
   code!: string
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user!: User
 
