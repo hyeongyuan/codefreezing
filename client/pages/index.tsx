@@ -13,7 +13,7 @@ function HomePage({ data: posts }: ServerSideProps<IPost[]>) {
   if (posts.length === 0) {
     return (
       <FullContainer>
-        <Image src="/svgs/empty_post.svg" height={240} width={240} />
+        <Image src="/svgs/empty_post.svg" height={240} width={320} />
         <MainText>아직 코드가 없습니다</MainText>
       </FullContainer>
     )
@@ -61,8 +61,8 @@ const FullContainer = styled.div`
   height: calc(100vh - 4rem);
 `
 
-const MainText = styled.strong`
-  font-size: 20px;
+const MainText = styled.p`
+  font-size: 2rem;
   margin-top: 22px;
-  color: #262626;
+  color: rgb(134, 142, 150);
 `
