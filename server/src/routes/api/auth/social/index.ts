@@ -67,19 +67,16 @@ const socialRoute: FastifyPluginCallback = (fastify, opts, done) => {
 
       const userRepo = getRepository(User)
       if (socialAccount) {
-        const user = await userRepo.findOne(socialAccount.user)
+        const user = await userRepo.findOne(socialAccount.user_id)
         if (!user) {
           throw new Error('User is missing')
         }
-
         const { refreshToken } = await user.generateToken()
-
         reply.setCookie('refresh_token', refreshToken, {
           path: '/',
           httpOnly: true,
           maxAge: 60 * 60 * 24 * 15,
         })
-
         const redirectUrl =
           process.env.NODE_ENV === 'development' ? 'http://localhost:8081' : ''
         reply.redirect(redirectUrl)

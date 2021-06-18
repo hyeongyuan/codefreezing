@@ -14,6 +14,8 @@ type ErrorName =
   | 'InternalServerError'
   | 'UnauthorizedError'
   | 'ForbiddenError'
+  | 'ConflictError'
+
 
 type CustomErrorParams = {
   statusCode: number

@@ -31,7 +31,7 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
     }
     try {
       const decoded = await decodeToken<DecodedToken>(refreshTokne)
-      const user = await getRepository(User).findOne(decoded.userId)
+      const user = await getRepository(User).findOne(decoded.user_id)
       if (!user) {
         throw new CustomError({
           statusCode: 404,
@@ -61,6 +61,18 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
     const { email, username, thumbnail } = request.body
     try {
       const decoded = await decodeToken<SocialRegisterToken>(registerToken)
+
+      const exists = await getRepository(User)
+        .createQueryBuilder()
+        .where('email = :email OR username = :username', { email, username })
+        .getOne();
+      if (exists) {
+        throw new CustomError({
+          statusCode: 409,
+          message: "already exists email or username",
+          name: 'ConflictError'
+        })
+      }
 
       const manager = getManager()
       const user = await manager.transaction(
@@ -94,11 +106,7 @@ const authRoute: FastifyPluginCallback = (fastify, opts, done) => {
 
       reply.status(201).send(user)
     } catch (e) {
-      throw new CustomError({
-        statusCode: 401,
-        message: 'Fail to decode token',
-        name: 'UnauthorizedError',
-      })
+      throw e
     }
   })
   /**

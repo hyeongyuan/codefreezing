@@ -29,4 +29,7 @@ export class SocialAccount {
   @OneToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user!: User
+
+  @Column('uuid')
+  user_id!: string;
 }
