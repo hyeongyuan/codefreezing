@@ -8,7 +8,7 @@ const redirectPath = `/api/auth/social/callback/`
 export const redirectUri =
   process.env.NODE_ENV === 'development'
     ? `http://localhost:3000${redirectPath}`
-    : ''
+    : `http://158.247.216.118:3000$${redirectPath}`
 
 export function generateSocialLoginLink(
   provider: SocialProvider,
