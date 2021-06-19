@@ -27,7 +27,7 @@ server.register(jwtPlugin)
 server.register(dbPlugin)
 server.register(apiRoute, { prefix: '/api' })
 
-server.listen(+PORT, (err) => {
+server.listen(+PORT, '0.0.0.0', (err) => {
   if (err) {
     server.log.error(err)
     process.exit(1)
