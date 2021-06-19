@@ -16,32 +16,40 @@ import 'prismjs/components/prism-c.min'
 import 'prismjs/components/prism-cpp.min'
 
 interface CodeViewerProps {
+  onClick?: () => void
   language: CodeLanguage
   content: string
+  hoverColor?: string
 }
 
-function CodeViewer({ language, content }: CodeViewerProps) {
+function CodeViewer({
+  onClick = () => {},
+  language,
+  content,
+  hoverColor,
+}: CodeViewerProps) {
   useEffect(() => {
     Prism.highlightAll()
   }, [language, content])
   return (
-    <Container>
-      <pre
-        style={{
-          padding: '4px 8px',
-          border: '1px solid #ebebeb',
-          background: '#fbfbfb',
-          borderRadius: 4,
-          lineHeight: '1.6rem',
-          marginTop: 0,
-          marginBottom: '1em',
-          height: 150,
-        }}
-      >
-        <code className={`language-${language}`} style={{ fontSize: '0.8rem' }}>
-          {content}
-        </code>
-      </pre>
+    <Container onClick={onClick}>
+      <CodeWrapper borderCoder={hoverColor}>
+        <pre
+          style={{
+            height: 150,
+            borderRadius: 5,
+            backgroundColor: '#fbfbfb',
+            margin: 0,
+          }}
+        >
+          <code
+            className={`language-${language}`}
+            style={{ fontSize: '0.8rem' }}
+          >
+            {content}
+          </code>
+        </pre>
+      </CodeWrapper>
     </Container>
   )
 }
@@ -61,4 +69,21 @@ const Container = styled.div`
   .token.number {
     color: #986801;
   } */
+`
+const CodeWrapper = styled.div<{ borderCoder?: string }>`
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ebebeb;
+  border-radius: 5px;
+
+  ${({ borderCoder }) =>
+    borderCoder &&
+    `
+      cursor: pointer;
+      :hover {
+        border-color: ${borderCoder};
+      }
+    `}
 `

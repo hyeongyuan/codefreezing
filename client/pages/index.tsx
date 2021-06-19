@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Image from 'next/image'
 import styled from '@emotion/styled'
-import Post from '@src/components/common/Post'
+import Card from '@src/components/common/Card'
 import { IPost, ServerSideProps } from '@src/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -22,7 +22,7 @@ function HomePage({ data: posts }: ServerSideProps<IPost[]>) {
     <div style={{ marginTop: 24 }}>
       <ListContainer>
         {posts?.map((post) => (
-          <Post key={post.id} {...post} />
+          <Card key={post.id} {...post} />
         ))}
       </ListContainer>
     </div>
