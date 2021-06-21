@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { CSSProperties, useEffect } from 'react'
 import Prism from 'prismjs'
 import { CodeLanguage } from '@src/types'
 import styled from '@emotion/styled'
@@ -16,13 +16,21 @@ import 'prismjs/components/prism-c.min'
 import 'prismjs/components/prism-cpp.min'
 
 interface CodeViewerProps {
+  style?: CSSProperties
   onClick?: () => void
   language: CodeLanguage
   content: string
   hoverColor?: string
 }
 
+const defaultStyle: CSSProperties = {
+  borderRadius: 5,
+  backgroundColor: '#fbfbfb',
+  margin: 0,
+}
+
 function CodeViewer({
+  style = {},
   onClick = () => {},
   language,
   content,
@@ -31,17 +39,12 @@ function CodeViewer({
   useEffect(() => {
     Prism.highlightAll()
   }, [language, content])
+
+  const preStyle = { ...defaultStyle, ...style }
   return (
     <Container onClick={onClick}>
       <CodeWrapper borderCoder={hoverColor}>
-        <pre
-          style={{
-            height: 150,
-            borderRadius: 5,
-            backgroundColor: '#fbfbfb',
-            margin: 0,
-          }}
-        >
+        <pre style={preStyle}>
           <code
             className={`language-${language}`}
             style={{ fontSize: '0.8rem' }}

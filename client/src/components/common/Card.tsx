@@ -25,7 +25,7 @@ function Card({
   return (
     <Container onClick={onClickPost}>
       <Title>{title}</Title>
-      <CodeViewer language={language} content={code} />
+      <CodeViewer style={{ height: 150 }} language={language} content={code} />
       <Footer>
         <Likes>{`좋아요 ${likes}`}</Likes>
         <Date>{formatDate(created_at)}</Date>

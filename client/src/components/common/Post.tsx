@@ -32,6 +32,7 @@ function Post({ title, description, filename, code, user, url_slug }: IPost) {
         <Description>{description}</Description>
       </div>
       <CodeViewer
+        style={{ maxHeight: 200 }}
         onClick={onClickCode}
         language={language}
         content={code}
