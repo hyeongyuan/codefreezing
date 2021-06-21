@@ -10,6 +10,9 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          <meta property="og:title" content="CodeFreezing" />
+          <meta property="og:description" content="Save your code and share it." />
+          <meta property="og:image" content="https://via.placeholder.com/1200x630/6C63FF/ffffff?text=CodeFreezing" />
           <link
             rel="preload"
             href="/fonts/NotoSans/NotoSans-Regular.woff2"
