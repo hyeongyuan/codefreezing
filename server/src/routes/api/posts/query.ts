@@ -22,6 +22,7 @@ export async function fetchPostWithTagsById(
       p.filename AS filename,
       p.is_private AS is_private,
       p.url_slug AS url_slug,
+      p.likes AS likes,
       p.created_at AS created_at,
       p.updated_at AS updated_at,
       u.id AS user_id,
@@ -55,6 +56,7 @@ export async function fetchPostWithTags({
       p.filename AS filename,
       p.is_private AS is_private,
       p.url_slug AS url_slug,
+      p.likes AS likes,
       p.created_at AS created_at,
       p.updated_at AS updated_at,
       u.id AS user_id,
@@ -86,6 +88,7 @@ function makePostByQuery(query: any): Post | undefined {
   post.filename = query[0].filename
   post.is_private = query[0].is_private
   post.url_slug = query[0].url_slug
+  post.likes = query[0].likes
   post.created_at = query[0].created_at
   post.updated_at = query[0].updated_at
 

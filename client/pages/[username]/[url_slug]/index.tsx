@@ -1,13 +1,15 @@
-import { MouseEvent, useEffect } from 'react'
+import { MouseEvent, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import axios from 'axios'
+import nookies from 'nookies'
 import styled from '@emotion/styled'
-import { apiDelete } from '@src/api'
+import { apiDelete, apiPost } from '@src/api'
 import { IPost, ServerSideProps } from '@src/types'
 import { useUserState } from '@src/atoms/authState'
 import { formatDate, getCodeLangFromFilename } from '@src/utils'
+import { GetServerSidePropsContext } from 'next'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -15,7 +17,8 @@ const CodeViewer = dynamic(() => import('@src/components/common/CodeViewer'), {
   ssr: false,
 })
 
-function PostPage({ data: post, error }: ServerSideProps<IPost>) {
+function PostPage({ data: initialPost, error }: ServerSideProps<IPost>) {
+  const [post, setPost] = useState(initialPost)
   const router = useRouter()
   const [user] = useUserState()
   const isOwn = user && post && user.id === post.user.id
@@ -49,6 +52,22 @@ function PostPage({ data: post, error }: ServerSideProps<IPost>) {
     console.log({ tagName })
   }
 
+  const onClickLike = async () => {
+    if (!post) return
+    if (!user) {
+      alert('로그인 후 이용해주세요.')
+      return
+    }
+    try {
+      const data = await apiPost<IPost>(
+        `/posts/${post.id}/${post.liked ? 'unlike' : 'like'}`,
+      )
+      setPost((prevPost) => ({ ...prevPost, ...data }))
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   if (!post) {
     return null
   }
@@ -80,6 +99,11 @@ function PostPage({ data: post, error }: ServerSideProps<IPost>) {
           </Tag>
         ))}
       </TagWrapper>
+      <BottomToolBar>
+        <Button onClick={onClickLike}>
+          {`${post.liked ? '싫은 상태로' : '좋은 상태로'} ${post.likes}`}
+        </Button>
+      </BottomToolBar>
     </Container>
   )
 }
@@ -89,15 +113,28 @@ interface IPostQuery {
   url_slug: string
 }
 
-export async function getServerSideProps({ query }: { query: IPostQuery }) {
-  const { username, url_slug: urlSlug } = query
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  const { username, url_slug: urlSlug } = ctx.query as unknown as IPostQuery
   if (!username || !urlSlug) return { props: {} }
   try {
+    const { refresh_token: refreshToken } = nookies.get(ctx)
+    let accessToken = ''
+    if (refreshToken) {
+      try {
+        const { data } = await axios.get(`${API_URL}/auth/refresh`, {
+          headers: { Cookie: `refresh_token=${refreshToken}` },
+        })
+        accessToken = data.accessToken
+      } catch {}
+    }
     const { data } = await axios.get(
       `${API_URL}/posts/${encodeURI(username)}/${encodeURI(urlSlug)}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } },
     )
+    console.log(data)
     return { props: { data } }
   } catch (error) {
+    console.log(error)
     const { response = { status: 502, data: {} } } = error
     return {
       props: {
@@ -184,3 +221,5 @@ const Tag = styled.a`
   background-color: rgb(241, 243, 245);
   color: #6c63ff;
 `
+
+const BottomToolBar = styled.div``

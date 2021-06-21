@@ -8,7 +8,15 @@ const CodeViewer = dynamic(() => import('@src/components/common/CodeViewer'), {
   ssr: false,
 })
 
-function Card({ title, code, filename, user, url_slug, created_at }: IPost) {
+function Card({
+  title,
+  code,
+  filename,
+  user,
+  url_slug,
+  likes,
+  created_at,
+}: IPost) {
   const router = useRouter()
   const onClickPost = () => {
     router.push('/[username]/[url_slug]', `/${user.username}/${url_slug}`)
@@ -18,7 +26,10 @@ function Card({ title, code, filename, user, url_slug, created_at }: IPost) {
     <Container onClick={onClickPost}>
       <Title>{title}</Title>
       <CodeViewer language={language} content={code} />
-      <Date>{formatDate(created_at)}</Date>
+      <Footer>
+        <Likes>{`좋아요 ${likes}`}</Likes>
+        <Date>{formatDate(created_at)}</Date>
+      </Footer>
     </Container>
   )
 }
@@ -42,6 +53,11 @@ const Title = styled.p`
   font-size: 1.6rem;
   font-weight: 500;
 `
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+const Likes = styled.p``
 const Date = styled.p`
   color: rgb(134, 142, 150);
 `
