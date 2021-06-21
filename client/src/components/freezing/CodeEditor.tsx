@@ -6,19 +6,30 @@ import {
   useEffect,
   ChangeEvent,
 } from 'react'
-import AceEditor from 'react-ace'
+import dynamic from 'next/dynamic'
 import styled from '@emotion/styled'
 import path from 'path'
 import Input from '@src/components/freezing/Input'
 import Select from '@src/components/freezing/Select'
-import { EXT_TO_LANG } from '@src/constants'
+import { EDITOR_HEIGHT, EXT_TO_LANG } from '@src/constants'
 import { CodeLanguage } from '@src/types'
 
-import 'ace-builds/src-noconflict/mode-typescript'
-import 'ace-builds/src-noconflict/mode-javascript'
-import 'ace-builds/src-noconflict/mode-java'
-import 'ace-builds/src-noconflict/mode-python'
-import 'ace-builds/src-noconflict/theme-tomorrow'
+const AceEditor = dynamic(() => import('@src/components/freezing/AceEditor'), {
+  ssr: false,
+  loading: () => (
+    <div
+      style={{
+        display: 'flex',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: EDITOR_HEIGHT,
+      }}
+    >
+      <p>Loading...</p>
+    </div>
+  ),
+})
 
 export interface CodeInfo {
   value: string
@@ -58,24 +69,20 @@ function CodeEditor({ code, onChange }: CodeEditorProps) {
         <div>
           <Select
             options={[
-              { label: 'hello', value: 'world' },
-              { label: 'world', value: 'hello' },
+              { label: '2', value: '2' },
+              { label: '4', value: '4' },
             ]}
             onChange={() => {}}
+            placeholder="Indent size"
             value=""
           />
         </div>
       </Toobar>
       <AceEditor
-        style={{ width: '100%' }}
-        setOptions={{ useWorker: false }}
         mode={lang}
-        theme="tomorrow"
-        fontSize={16}
-        highlightActiveLine={false}
-        tabSize={2}
         onChange={onChangeValue}
         value={code.value}
+        tabSize={2}
       />
     </Container>
   )

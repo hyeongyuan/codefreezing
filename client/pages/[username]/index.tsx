@@ -42,7 +42,7 @@ function UserPage({ data: user, error }: ServerSideProps<User>) {
   return (
     <Container>
       <ProfileSection>
-        <Avatar imageUrl={user.thumbnail || ''} size={120} />
+        <Avatar imageUrl={user.thumbnail || ''} size={160} />
         <Username>{user.username}</Username>
       </ProfileSection>
       <ContentSection>
@@ -89,6 +89,13 @@ const Container = styled.div`
   margin-top: 2rem;
   padding-left: 1rem;
   padding-right: 1rem;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  @media screen and (min-width: 1012px) {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
   @media screen and (max-width: 768px) {
     flex-direction: column;
     padding-left: 0.5rem;
