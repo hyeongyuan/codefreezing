@@ -131,7 +131,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       `${API_URL}/posts/${encodeURI(username)}/${encodeURI(urlSlug)}`,
       { headers: { Authorization: `Bearer ${accessToken}` } },
     )
-    console.log(data)
     return { props: { data } }
   } catch (error) {
     console.log(error)
