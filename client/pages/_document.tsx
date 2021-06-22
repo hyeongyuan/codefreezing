@@ -17,8 +17,8 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <meta charSet="utf-8" />
-          <title>CodeFreezing</title>
-          <meta property="og:title" content="CodeFreezing" />
+          <title>Code Freezing</title>
+          <meta property="og:title" content="Code Freezing" />
           <meta
             property="og:description"
             content="Save your code and share it."
