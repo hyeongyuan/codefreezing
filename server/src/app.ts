@@ -18,7 +18,7 @@ server.register(cors, {
       return callback(null, true)
     }
     const host = origin.split('://')[1]
-    const allowedHost = ['158.247.216.118:8081']
+    const allowedHost = ['158.247.216.118']
 
     const allowed = allowedHost.includes(host)
     callback(null, allowed)
