@@ -5,6 +5,7 @@ import CustomError from '@lib/CustomError'
 import { Post } from '@entity/Post'
 import { Tag } from '@entity/Tag'
 import { PostsTags } from '@entity/PostsTags'
+import { PostLike } from '@entity/PostLike'
 import { User } from '@entity/User'
 import { escapeForUrl } from '@lib/utils'
 import withAuth from '@handler/withAuth'
@@ -203,6 +204,102 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
     },
   )
   /**
+   * POST /api/posts/:id/like
+   */
+  fastify.post<{ Params: { id: string } }>(
+    '/:id/like',
+    { preHandler: [withAuth] },
+    async (request, reply) => {
+      const { id } = request.params
+      try {
+        // Find post
+        const postRepo = getRepository(Post)
+        const post = await postRepo.findOne(id)
+        if (!post) {
+          throw new CustomError({
+            statusCode: 404,
+            message: 'Post does not exist',
+            name: 'NotFoundError',
+          })
+        }
+
+        // Check already liked
+        const postLikeRepo = getRepository(PostLike)
+        const alreadyLiked = await postLikeRepo.findOne({
+          where: {
+            post_id: id,
+            user_id: request.user?.id,
+          },
+        })
+
+        if (alreadyLiked) {
+          reply.send({ ...post, liked: true })
+          return
+        }
+
+        const postLike = new PostLike()
+        postLike.post_id = id
+        postLike.user_id = request.user?.id as string
+
+        await postLikeRepo.save(postLike)
+
+        const count = await postLikeRepo.count({ where: { post_id: id } })
+        post.likes = count
+        await postRepo.save(post)
+
+        reply.send({ ...post, liked: true })
+      } catch (e) {
+        throw e
+      }
+    },
+  )
+  /**
+   * POST /api/posts/:id/like
+   */
+  fastify.post<{ Params: { id: string } }>(
+    '/:id/unlike',
+    { preHandler: [withAuth] },
+    async (request, reply) => {
+      const { id } = request.params
+      try {
+        // Find post
+        const postRepo = getRepository(Post)
+        const post = await postRepo.findOne(id)
+        if (!post) {
+          throw new CustomError({
+            statusCode: 404,
+            message: 'Post does not exist',
+            name: 'NotFoundError',
+          })
+        }
+
+        // Check already liked
+        const postLikeRepo = getRepository(PostLike)
+        const postLike = await postLikeRepo.findOne({
+          where: {
+            post_id: id,
+            user_id: request.user?.id,
+          },
+        })
+
+        if (!postLike) {
+          reply.send({ ...post, liked: false })
+          return
+        }
+
+        await postLikeRepo.remove(postLike)
+
+        const count = await postLikeRepo.count({ where: { post_id: id } })
+        post.likes = count
+        await postRepo.save(post)
+
+        reply.send({ ...post, liked: false })
+      } catch (e) {
+        throw e
+      }
+    },
+  )
+  /**
    * GET /api/posts/:username/:url_slug
    */
   fastify.get<{ Params: IPostParams }>(
@@ -218,7 +315,16 @@ const postsRoute: FastifyPluginCallback = (fastify, opts, done) => {
             name: 'NotFoundError',
           })
         }
-        reply.send(post)
+        let liked = false
+        if (request.user) {
+          const postLike = await getRepository(PostLike).findOne({
+            post_id: post.id,
+            user_id: request.user.id,
+          })
+          console.log({ postLike })
+          liked = !!postLike
+        }
+        reply.send({ ...post, liked })
       } catch (e) {
         throw e
       }

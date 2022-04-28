@@ -15,6 +15,8 @@ export interface IPost {
   user: User
   tags: ITag[]
   url_slug: string
+  likes: number
+  liked: boolean
   created_at: string
   updated_at: string
 }

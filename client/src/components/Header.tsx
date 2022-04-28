@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import { useRouter } from 'next/router'
+import Image from 'next/image'
 import Button from '@src/components/common/Button'
 import { useUserState } from '@src/atoms/authState'
 import { apiPost, revokeAccessToken } from '@src/api'
@@ -41,7 +42,12 @@ function Header() {
             <Button onClick={onLogout} label="로그아웃" />
           </div>
         ) : (
-          <a href={`${API_URL}/auth/social/redirect/github`}>깃헙 로그인</a>
+          <a
+            style={{ display: 'flex' }}
+            href={`${API_URL}/auth/social/redirect/github`}
+          >
+            <Image src="/images/github.png" height={32} width={32} />
+          </a>
         )}
       </Inner>
     </Container>
