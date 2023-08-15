@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import dynamic from 'next/dynamic'
 import axios from 'axios'
 import styled from '@emotion/styled'
 import InputTitle from '@src/components/common/InputTitle'
@@ -8,17 +7,10 @@ import InputTags from '@src/components/common/InputTags'
 import Button from '@src/components/common/Button'
 import Input from '@src/components/freezing/Input'
 import { apiPost, apiPut } from '@src/api'
-import { CodeInfo } from '@src/components/freezing/CodeEditor'
+import CodeEditor, { CodeInfo } from '@src/components/freezing/CodeEditor'
 import { IPost, ServerSideProps } from '@src/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
-
-const CodeEditor = dynamic(
-  () => import('@src/components/freezing/CodeEditor'),
-  {
-    ssr: false,
-  },
-)
 
 function FreezingPage({ data }: ServerSideProps<IPost>) {
   const router = useRouter()
