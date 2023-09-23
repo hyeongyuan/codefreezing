@@ -80,7 +80,7 @@ const socialRoute: FastifyPluginCallback = (fastify, opts, done) => {
         const redirectUrl =
           process.env.NODE_ENV === 'development'
             ? 'http://localhost:8081'
-            : 'http://158.247.216.118:8081'
+            : 'http://158.247.216.118'
         reply.redirect(redirectUrl)
         return
       }
@@ -96,7 +96,7 @@ const socialRoute: FastifyPluginCallback = (fastify, opts, done) => {
         const redirectUrl =
           process.env.NODE_ENV === 'development'
             ? 'http://localhost:8081'
-            : 'http://158.247.216.118:8081'
+            : 'http://158.247.216.118'
         reply.redirect(redirectUrl)
         return
       }
@@ -119,7 +119,7 @@ const socialRoute: FastifyPluginCallback = (fastify, opts, done) => {
       const redirectUrl =
         process.env.NODE_ENV === 'development'
           ? 'http://localhost:8081/register?social=1'
-          : 'http://158.247.216.118:8081/register?social=1'
+          : 'http://158.247.216.118/register?social=1'
       reply.redirect(redirectUrl)
     } catch (e) {
       throw new CustomError({
