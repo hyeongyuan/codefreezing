@@ -44,9 +44,6 @@ export class Post {
   @Column({ type: 'varchar', length: 255 })
   url_slug!: string
 
-  @Column({ type: 'integer', default: 0 })
-  likes!: number;
-
   @CreateDateColumn()
   created_at!: Date
 

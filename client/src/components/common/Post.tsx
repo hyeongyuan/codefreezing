@@ -1,43 +1,32 @@
-import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
 import styled from '@emotion/styled'
-import { getCodeLangFromFilename } from '@src/utils'
+import dynamic from 'next/dynamic'
 import { IPost } from '@src/types'
+import { useRouter } from 'next/router'
+import { formatDate, getCodeLangFromFilename } from '@src/utils'
 
 const CodeViewer = dynamic(() => import('@src/components/common/CodeViewer'), {
   ssr: false,
 })
 
-function Post({ title, description, filename, code, user, url_slug }: IPost) {
+function Post({
+  id,
+  title,
+  code,
+  filename,
+  user,
+  url_slug,
+  created_at,
+}: IPost) {
   const router = useRouter()
-  const language = getCodeLangFromFilename(filename)
-
-  const onClickCode = () => {
+  const onClickPost = () => {
     router.push('/[username]/[url_slug]', `/${user.username}/${url_slug}`)
   }
+  const language = getCodeLangFromFilename(filename)
   return (
-    <Container>
-      <div style={{ paddingLeft: 10 }}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-          }}
-        >
-          <Title>{title}</Title>
-          <Separator>/</Separator>
-          <p>{filename}</p>
-        </div>
-        <Description>{description}</Description>
-      </div>
-      <CodeViewer
-        style={{ maxHeight: 200 }}
-        onClick={onClickCode}
-        language={language}
-        content={code}
-        hoverColor="#2767cf"
-      />
+    <Container onClick={onClickPost}>
+      <Title>{title}</Title>
+      <CodeViewer key={id} language={language} content={code} />
+      <Date>{formatDate(created_at)}</Date>
     </Container>
   )
 }
@@ -45,13 +34,22 @@ function Post({ title, description, filename, code, user, url_slug }: IPost) {
 export default Post
 
 const Container = styled.div`
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 10px;
+
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: rgb(0 0 0 / 4%) 0px 4px 16px 0px;
+  cursor: pointer;
 `
-const Title = styled.h3``
-const Description = styled.p`
-  font-size: 12px;
+const Title = styled.p`
+  color: rgb(104, 104, 104);
+  text-align: center;
+  padding-bottom: 20px;
+  font-size: 1.6rem;
+  font-weight: 500;
 `
-const Separator = styled.span`
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
+const Date = styled.p`
+  color: rgb(134, 142, 150);
 `
