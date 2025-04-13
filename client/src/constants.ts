@@ -10,5 +10,3 @@ export const EXT_TO_LANG: ExtToLang = {
   '.java': 'java',
   '.py': 'python',
 }
-
-export const EDITOR_HEIGHT = 550
