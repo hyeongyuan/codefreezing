@@ -15,11 +15,13 @@ const server = fastify({ logger: true })
 server.register(cors, {
   origin: (origin, callback) => {
     if (!origin || /localhost/.test(origin)) {
-      callback(null, true)
-      return
+      return callback(null, true)
     }
-    // Generate an error on other origins, disabling access
-    callback(new Error('Not allowed'), false)
+    const host = origin.split('://')[1]
+    const allowedHost = ['158.247.216.118']
+
+    const allowed = allowedHost.includes(host)
+    callback(null, allowed)
   },
 })
 server.register(cookie)
@@ -27,7 +29,7 @@ server.register(jwtPlugin)
 server.register(dbPlugin)
 server.register(apiRoute, { prefix: '/api' })
 
-server.listen(+PORT, (err) => {
+server.listen(+PORT, '0.0.0.0', (err) => {
   if (err) {
     server.log.error(err)
     process.exit(1)

@@ -4,7 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node -r tsconfig-paths/register ./src/app.ts | pino-pretty"
+    "start": "ts-node --transpile-only -r tsconfig-paths/register ./src/app.ts | pino-pretty -c -t",
+    "start:pm2": "pm2 start deploy.config.json",
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register ./src/app.ts | pino-pretty"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -26,6 +28,7 @@
     "@types/pino": "^6.3.8",
     "pino-pretty": "^5.0.2",
     "ts-node": "^10.0.0",
+    "ts-node-dev": "^1.1.6",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.3.2"
   }
